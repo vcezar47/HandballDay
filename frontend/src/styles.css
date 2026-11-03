@@ -1,0 +1,336 @@
+:root {
+  color-scheme: dark;
+  --bg: #05050d;
+  --text: #ebeafa;
+  --muted: #8d8bab;
+  --glass: rgb(16 14 36 / 0.55);
+  --field: rgb(255 255 255 / 0.05);
+  --border: rgb(255 255 255 / 0.1);
+  --accent: #7c6cff;
+  --accent-2: #4fd1ff;
+  --error-bg: rgb(255 90 90 / 0.12);
+  --error-text: #ff9b92;
+  --success-bg: rgb(80 220 140 / 0.12);
+  --success-text: #7be0a0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ---------- background ---------- */
+
+.flow {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* soft vignette keeps the edges dark and the centre readable */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 30%, rgb(5 5 13 / 0.75) 100%);
+}
+
+.stage {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  animation: fade-in 0.9s ease both;
+}
+
+/* ---------- home ---------- */
+
+.home {
+  max-width: 760px;
+  text-align: center;
+}
+
+.eyebrow {
+  margin: 0 0 22px;
+  font-size: 0.75rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--muted);
+  animation: fade-in 2s 0.3s ease both;
+}
+
+.mystery {
+  margin: 0 0 22px;
+  font-size: clamp(2rem, 7vw, 4.4rem);
+  font-weight: 200;
+  line-height: 1.2;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  background: linear-gradient(100deg, #c9c4ff 0%, #8fd9ff 40%, #e0a8ff 75%, #c9c4ff 100%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation:
+    reveal 2.6s cubic-bezier(0.2, 0.7, 0.2, 1) both,
+    shimmer 9s ease-in-out infinite alternate;
+}
+
+.lede {
+  margin: 0 0 36px;
+  color: var(--muted);
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+  animation: fade-in 2s 1.2s ease both;
+}
+
+.lede strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.enter,
+.ghost {
+  display: inline-block;
+  padding: 12px 38px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.04);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s,
+    background 0.3s;
+  animation: fade-in 2s 1.8s ease both;
+}
+
+.enter:hover,
+.ghost:hover {
+  border-color: var(--accent-2);
+  background: rgb(79 209 255 / 0.08);
+  box-shadow: 0 0 28px rgb(124 108 255 / 0.4);
+}
+
+/* ---------- auth card ---------- */
+
+.card {
+  width: 100%;
+  max-width: 390px;
+  padding: 30px 28px 32px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 20px 60px rgb(0 0 0 / 0.5);
+}
+
+.back {
+  display: inline-block;
+  margin-bottom: 14px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.back:hover {
+  color: var(--text);
+}
+
+h1 {
+  margin: 0 0 20px;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 20px;
+  background: rgb(0 0 0 / 0.3);
+  border-radius: 10px;
+}
+
+.tab {
+  flex: 1;
+  padding: 8px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.tab.active {
+  background: rgb(255 255 255 / 0.1);
+  color: var(--text);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--field);
+  color: var(--text);
+  font: inherit;
+  font-weight: 400;
+}
+
+input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-field input {
+  padding-right: 44px;
+}
+
+.eye {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 42px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 0 8px 8px 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.eye:hover,
+.eye[aria-pressed='true'] {
+  color: var(--accent-2);
+}
+
+.eye:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.primary {
+  padding: 11px;
+  border: 0;
+  border-radius: 8px;
+  background: linear-gradient(100deg, var(--accent), #5a8bff);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+
+.primary:hover:not(:disabled) {
+  filter: brightness(1.12);
+}
+
+.primary:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.message {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.error {
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+
+.success {
+  background: var(--success-bg);
+  color: var(--success-text);
+}
+
+/* ---------- animation ---------- */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    filter: blur(14px);
+    letter-spacing: 0.45em;
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    letter-spacing: 0.18em;
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 0% 0;
+  }
+  to {
+    background-position: 100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
