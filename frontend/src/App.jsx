@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router'
 import AuthForm from './AuthForm.jsx'
 import FlowBackground from './FlowBackground.jsx'
 import Home from './Home.jsx'
 
-const STORAGE_KEY = 'daw-user'
+const STORAGE_KEY = 'handballday-user'
 
 function loadUser() {
   try {
@@ -13,26 +14,15 @@ function loadUser() {
   }
 }
 
-const currentRoute = () => window.location.hash.replace(/^#/, '') || '/'
-
-function useRoute() {
-  const [route, setRoute] = useState(currentRoute)
-  useEffect(() => {
-    const onChange = () => setRoute(currentRoute())
-    window.addEventListener('hashchange', onChange)
-    return () => window.removeEventListener('hashchange', onChange)
-  }, [])
-  return route
-}
-
 export default function App() {
   const [user, setUser] = useState(loadUser)
-  const route = useRoute()
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
 
   function handleLogin(u) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(u))
     setUser(u)
-    window.location.hash = '/'
+    navigate('/')
   }
 
   function handleLogout() {
@@ -40,13 +30,15 @@ export default function App() {
     setUser(null)
   }
 
-  const showAuth = route === '/login' && !user
-
   return (
     <>
       <FlowBackground />
-      <div className="stage" key={showAuth ? 'auth' : 'home'}>
-        {showAuth ? <AuthForm onLogin={handleLogin} /> : <Home user={user} onLogout={handleLogout} />}
+      <div className="stage" key={pathname}>
+        <Routes>
+          <Route path="/" element={<Home user={user} onLogout={handleLogout} />} />
+          <Route path="/login" element={user ? <Navigate to="/" replace /> : <AuthForm onLogin={handleLogin} />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </div>
     </>
   )

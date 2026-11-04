@@ -1,0 +1,44 @@
+/* Page structure: background canvas, stage, home column, auth card. */
+
+.flow {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* soft vignette keeps the edges dark and the centre readable */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 30%, rgb(5 5 13 / 0.75) 100%);
+}
+
+.stage {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  animation: fade-in 0.9s ease both;
+}
+.home {
+  max-width: 760px;
+  text-align: center;
+}
+.card {
+  width: 100%;
+  max-width: 390px;
+  padding: 30px 28px 32px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 20px 60px rgb(0 0 0 / 0.5);
+}

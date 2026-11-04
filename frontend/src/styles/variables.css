@@ -1,0 +1,17 @@
+/* Design tokens: colours used across the site. */
+
+:root {
+  color-scheme: dark;
+  --bg: #05050d;
+  --text: #ebeafa;
+  --muted: #8d8bab;
+  --glass: rgb(16 14 36 / 0.55);
+  --field: rgb(255 255 255 / 0.05);
+  --border: rgb(255 255 255 / 0.1);
+  --accent: #7c6cff;
+  --accent-2: #4fd1ff;
+  --error-bg: rgb(255 90 90 / 0.12);
+  --error-text: #ff9b92;
+  --success-bg: rgb(80 220 140 / 0.12);
+  --success-text: #7be0a0;
+}

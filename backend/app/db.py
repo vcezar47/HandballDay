@@ -1,47 +1,52 @@
-from sqlalchemy import create_engine, text
-from sqlalchemy.engine import URL
-from sqlalchemy.orm import DeclarativeBase, sessionmaker
+from functools import lru_cache
 
-from . import config
+from sqlalchemy import Engine, create_engine, text
+from sqlalchemy.engine import URL
+from sqlalchemy.orm import Session, sessionmaker
+
+from .config import get_config
 
 
 def _url(database: str) -> URL:
+    cfg = get_config()
     return URL.create(
         "postgresql+psycopg",
-        username=config.DB_USER,
-        password=config.DB_PASSWORD,
-        host=config.DB_HOST,
-        port=config.DB_PORT,
+        username=cfg.db_user,
+        password=cfg.db_password,
+        host=cfg.db_host,
+        port=cfg.db_port,
         database=database,
     )
 
 
-engine = create_engine(_url(config.DB_NAME), pool_pre_ping=True)
-SessionLocal = sessionmaker(bind=engine, autoflush=False)
+@lru_cache
+def get_engine() -> Engine:
+    return create_engine(_url(get_config().db_name), pool_pre_ping=True)
 
 
-class Base(DeclarativeBase):
-    pass
+@lru_cache
+def _sessionmaker() -> sessionmaker[Session]:
+    return sessionmaker(bind=get_engine(), autoflush=False)
 
 
 def ensure_database() -> None:
     """Create the target database if it does not exist yet."""
+    name = get_config().db_name
     admin = create_engine(_url("postgres"), isolation_level="AUTOCOMMIT")
     try:
         with admin.connect() as conn:
             exists = conn.execute(
-                text("SELECT 1 FROM pg_database WHERE datname = :name"),
-                {"name": config.DB_NAME},
+                text("SELECT 1 FROM pg_database WHERE datname = :name"), {"name": name}
             ).scalar()
             if not exists:
-                quoted = config.DB_NAME.replace('"', '""')
+                quoted = name.replace('"', '""')
                 conn.execute(text(f'CREATE DATABASE "{quoted}"'))
     finally:
         admin.dispose()
 
 
 def get_db():
-    db = SessionLocal()
+    db = _sessionmaker()()
     try:
         yield db
     finally:

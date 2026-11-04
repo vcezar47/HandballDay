@@ -19,5 +19,6 @@ async function post(path, body) {
   return data
 }
 
-export const signup = (username, password) => post('/signup', { username, password })
-export const login = (username, password) => post('/login', { username, password })
+export const register = (email, displayName, password) =>
+  post('/auth/register', { email, display_name: displayName, password })
+export const login = (email, password) => post('/auth/login', { email, password })

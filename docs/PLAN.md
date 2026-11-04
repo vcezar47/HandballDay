@@ -26,15 +26,15 @@ Legend: ⬜ not started · 🟡 partial · ✅ done
 
 | # | Criterion | Milestone | How we satisfy it | Status |
 |---|---|:-:|---|:-:|
-| 2.01 | DB in 3NF | M0 | Schema in section 4, written up in `docs/DATABASE.md` with an ER diagram; price snapshots on line items justified there | ⬜ |
+| 2.01 | DB in 3NF | M0 | Schema in section 4, written up in `docs/DATABASE.md` with an ER diagram; price snapshots on line items justified there | ✅ |
 | 2.02 | ≥4 use cases | M2–M5 | UC1–UC7 above | ⬜ |
-| 2.03 | MVC / Repository | M0 | `models/`, `repositories/` (with `IRepository`), `services/`, `routers/` (controllers), React pages as views | ⬜ |
+| 2.03 | MVC / Repository | M0 | `models/`, `repositories/` (with `IRepository`), `services/`, `routers/` (controllers), React pages as views | ✅ |
 | 2.04 | Images, text, tables, links | M2 | Club pages, fixture tables, nav and footer links, club colours, jersey images | ⬜ |
-| 3.01 | ≥3 classes | M0 | Models, repositories, services, errors, gateways | ⬜ |
+| 3.01 | ≥3 classes | M0 | Models, repositories, services, errors, gateways | ✅ |
 | 3.02 | ≥1 interface | M3 | `IRepository`, `PaymentGateway` (Stripe and fake implementations), `FileValidator` | ⬜ |
 | 3.03 | Authentication | M1 | Email + argon2 hash, signed HttpOnly session cookie | ⬜ |
 | 3.04 | Authorization | M1 | Roles fan / staff / admin, dependency `require_role(...)`, ownership checks on tickets, orders and designs, staff limited to their own club | ⬜ |
-| 4.01 | Inheritance | M0 | Repositories extend a base, errors extend `AppError`, models extend mixins | ⬜ |
+| 4.01 | Inheritance | M0 | Repositories extend a base, errors extend `AppError`, models extend mixins | ✅ |
 | 4.02 | ≥2 exception types | M1 | `AppError` family (validation, auth, forbidden, not found, conflict, payment) mapped to JSON by handlers | ⬜ |
 | 4.03 | Image carousel | M2 | Home carousel of upcoming matches: autoplay, pause, arrows, dots, swipe, keyboard, reduced-motion aware | ⬜ |
 | 4.04 | Animation | M2, M4 | Existing flow background, page transitions, jersey preview recolouring live | ⬜ |
@@ -42,7 +42,7 @@ Legend: ⬜ not started · 🟡 partial · ✅ done
 | 5.02 | Responsive | M2 | Mobile-first, breakpoints near 600 and 1024 px, screenshots at 390 / 768 / 1440 px in `docs/screenshots/` | ⬜ |
 | 6.01 | ≥5 unit tests | M1+ | pytest from M1 on, target 40+; a few Vitest tests for the jersey and carousel logic | ⬜ |
 | 6.02 | Git | M0 | This repo; small commits per task | 🟡 |
-| 6.03 | GitHub Actions CI | M0 | Backend tests against a Postgres service container, frontend lint and build | ⬜ |
+| 6.03 | GitHub Actions CI | M0 | Backend tests against a Postgres service container, frontend lint and build | 🟡 |
 | 7.01 | Activity log file | M1, M3, M5 | `backend/logs/activity.log`, rotating; register, login, failures, orders, scans, admin actions; viewer in admin panel | ⬜ |
 | 7.02 | Hosting | M6 | Apache VPS or equivalent, see decision D3 | ⬜ |
 | 8.01 | Lighthouse SEO ≥90 | M2, M6 | Per-page title, meta description, canonical, `robots.txt`, `sitemap.xml`, alt text, crawlable links; measured on the deployed site | ⬜ |
@@ -62,7 +62,7 @@ Legend: ⬜ not started · 🟡 partial · ✅ done
 
 Each milestone ends with tests passing and a commit. Sizes: S ≈ an evening, M ≈ a few evenings, L ≈ a week.
 
-### M0: Foundations (S)
+### M0: Foundations (S) ✅ built, CI not yet seen green
 - Restructure `backend/app/` into `models/`, `repositories/`, `services/`, `routers/`, `schemas/`, `security/`, `errors.py`.
 - Move `config.py` to environment-based classes (dev / test / prod).
 - Models for the schema in section 4, `IRepository` base, seed script with the 14 Liga Florilor clubs (section 5).

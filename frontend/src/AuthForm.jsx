@@ -1,10 +1,12 @@
 import { useState } from 'react'
-import { login, signup } from './api.js'
+import { Link } from 'react-router'
+import { login, register } from './api.js'
 import PasswordInput from './PasswordInput.jsx'
 
 export default function AuthForm({ onLogin }) {
   const [mode, setMode] = useState('login') // 'login' | 'signup'
-  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
+  const [displayName, setDisplayName] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [info, setInfo] = useState('')
@@ -25,10 +27,10 @@ export default function AuthForm({ onLogin }) {
     setLoading(true)
     try {
       if (isLogin) {
-        const { user } = await login(username, password)
+        const { user } = await login(email, password)
         onLogin(user)
       } else {
-        await signup(username, password)
+        await register(email, displayName, password)
         setMode('login')
         setPassword('')
         setInfo('Account created. You can log in now.')
@@ -42,9 +44,9 @@ export default function AuthForm({ onLogin }) {
 
   return (
     <div className="card">
-      <a className="back" href="#/">
+      <Link className="back" to="/">
         &larr; Back
-      </a>
+      </Link>
       <h1>{isLogin ? 'Welcome back' : 'Create an account'}</h1>
 
       <div className="tabs" role="tablist">
@@ -70,17 +72,31 @@ export default function AuthForm({ onLogin }) {
 
       <form onSubmit={handleSubmit}>
         <label>
-          Username
+          Email
           <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            minLength={3}
-            maxLength={50}
-            autoComplete="username"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            maxLength={254}
+            autoComplete="email"
             required
           />
         </label>
+
+        {!isLogin && (
+          <label>
+            Display name
+            <input
+              type="text"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              minLength={2}
+              maxLength={50}
+              autoComplete="nickname"
+              required
+            />
+          </label>
+        )}
 
         <label>
           Password
@@ -88,7 +104,7 @@ export default function AuthForm({ onLogin }) {
             key={mode}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            minLength={4}
+            minLength={isLogin ? 1 : 8}
             maxLength={100}
             autoComplete={isLogin ? 'current-password' : 'new-password'}
             required

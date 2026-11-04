@@ -1,0 +1,156 @@
+[
+  {
+    "name": "Minaur Baia Mare",
+    "slug": "minaur-baia-mare",
+    "city": "Baia Mare",
+    "founded_year": 2015,
+    "description": "CS Minaur Baia Mare is a women's handball team from Baia Mare, Maramureș, a regular in the Liga Națională and a former European League side. The women's section has been part of Minaur only since 2015, when the club was re-founded after its bankruptcy, and it grew out of HCM Baia Mare, which also went bankrupt in 2016. Eighth in 2025/26, Minaur turned to young Spanish coach David Ginesta for the new season and play at the Sala Sporturilor Lascăr Pană.",
+    "venue": "Sala Sporturilor Lascăr Pană",
+    "capacity": 2218,
+    "primary_color": "#014698",
+    "secondary_color": "#ffffff"
+  },
+  {
+    "name": "CSM Corona Brașov",
+    "slug": "csm-corona-brasov",
+    "city": "Brașov",
+    "founded_year": 1960,
+    "description": "CSM Corona Brașov is a Romanian women's handball club with a long history, originally founded as Rulmentul Brașov, with national titles from 1981 and 2006. Bogdan Burcea took the team to the podium in each of his last two seasons, third in 2025/26, before leaving for Dunărea Brăila in the summer; Norwegian Bent Dahl, a former Râmnicu Vâlcea coach, took over. Corona play in the EHF European League for 2026/27 at the Sala Sporturilor \"Dumitru Popescu Colibași\".",
+    "venue": "Sala Sporturilor Dumitru Popescu Colibași",
+    "capacity": 1570,
+    "primary_color": "#124495",
+    "secondary_color": "#e9e173"
+  },
+  {
+    "name": "SCM Universitatea Craiova",
+    "slug": "scm-universitatea-craiova",
+    "city": "Craiova",
+    "founded_year": 2006,
+    "description": "SCM Craiova (Sport Club Municipal Craiova) is a major name in Romanian handball, most famous for their historic EHF Cup title in 2018, when they beat Vipers Kristiansand in a dramatic final. Founded in 2006, the team plays in the Liga Națională at the modern 4,215-seat Sala Polivalentă. After finishing ninth in 2025/26, coach Costică Buceschi rebuilt the squad in the summer with Norwegian, Polish and Icelandic signings.",
+    "venue": "Sala Polivalentă Craiova",
+    "capacity": 4215,
+    "primary_color": "#007aaf",
+    "secondary_color": "#5d4c45"
+  },
+  {
+    "name": "CSM București",
+    "slug": "csm-bucuresti",
+    "city": "București",
+    "founded_year": 2007,
+    "description": "Clubul Sportiv Municipal București, also known as CSM București or CSM Bucharest, is a professional women's handball team from Bucharest that plays its home matches in the 5,300-seat Polyvalent Hall in Tineretului Park. CSM established itself as a major force in Romanian and European handball in the late 2010s, winning the EHF Champions League in its debut season, reaching the Final Four three years running and winning four league titles in a row. Bojana Popović took over in December 2025 and took the side to the 2026 Champions League Final Four, but the league title, after three straight, went to Gloria Bistrița by a single point. CSM are in the Champions League again for 2026/27.",
+    "venue": "Sala Polivalentă",
+    "capacity": 5300,
+    "primary_color": "#303e87",
+    "secondary_color": "#ffffff"
+  },
+  {
+    "name": "CSM Iași 2020",
+    "slug": "csm-iasi-2020",
+    "city": "Iași",
+    "founded_year": 2020,
+    "description": "CSM Iași 2020 is the women's handball team of the city of Iași's municipal sports club, set up by the local council in 2020 to bring top-flight handball back to Moldavia's largest city after more than two decades. Promoted in 2024, the side finished its debut Liga Florilor season bottom of the table and went straight back down, then won promotion again through the 2025/26 Divizia A play-off. Back in the top flight for 2026/27 under Portuguese coach Ana Seabra, Iași mix local players with a handful of imports and play their home games in the 2,000-seat Sala Polivalentă.",
+    "venue": "Sala Polivalentă Iași",
+    "capacity": 2000,
+    "primary_color": "#bd1f23",
+    "secondary_color": "#000000"
+  },
+  {
+    "name": "CSM Târgu Mureș",
+    "slug": "csm-targu-mures",
+    "city": "Târgu Mureș",
+    "founded_year": 2025,
+    "description": "CSM Târgu Mureș is one of the youngest clubs in Romanian women's handball, founded in the summer of 2025 to give the city a senior team again. It needed a single season: second in the 2025/26 Divizia A play-off, the club went up to the Liga Florilor for 2026/27. Coach João Florêncio has built a cosmopolitan squad around Angolan and Hungarian imports and local players such as Krisztina Tóth, and home games are played at the 2,000-seat Sala Sporturilor \"Simon Ladislau\".",
+    "venue": "Sala Sporturilor \"Simon Ladislau\"",
+    "capacity": 2000,
+    "primary_color": "#194280",
+    "secondary_color": "#c41230"
+  },
+  {
+    "name": "CSU Știința București",
+    "slug": "csu-stiinta-bucuresti",
+    "city": "București",
+    "founded_year": 1949,
+    "description": "CSU Știința București is the university club of Bucharest and one of the founding names of Romanian women's handball. Știința won the European Champions Cup in 1961 and national titles in 1960, 1965 and 1971, before the club was dissolved after 1989. Refounded by students in 2010 and run by the Politehnica university since 2019, it has bounced between the top two divisions, and returned to the Liga Florilor for 2026/27 through the promotion play-off. Money is tight: a group of players on loan from Rapid helped the club take its place. Home games are in the small Sala Agronomia.",
+    "venue": "Sala Agronomia",
+    "capacity": 350,
+    "primary_color": "#fceb0c",
+    "secondary_color": "#050708"
+  },
+  {
+    "name": "Dunărea Brăila",
+    "slug": "dunarea-braila",
+    "city": "Brăila",
+    "founded_year": 1997,
+    "description": "HC Dunărea Brăila is a Romanian women's handball club founded in 1997 that has become a regular in the upper half of the Liga Națională and in European competition. Fifth in 2025/26, Brăila brought in Bogdan Burcea from Corona Brașov for the new season, with goalkeeper Bianca Curmenț following him, and play in the EHF European League for 2026/27 at the Sala Polivalentă Danubius.",
+    "venue": "Sala Polivalentă Danubius",
+    "capacity": 2200,
+    "primary_color": "#2c457a",
+    "secondary_color": "#f0f1f4"
+  },
+  {
+    "name": "Gloria Bistrița",
+    "slug": "gloria-bistrita",
+    "city": "Bistrița",
+    "founded_year": 2009,
+    "description": "Clubul Sportiv Gloria Bistrița, commonly known as Gloria Bistrița or simply Gloria, is a professional women's handball team from Bistrița, in Transylvania, part of a multi-sport club that also runs a men's football section. Formed in 2018, Gloria rose quickly and in 2025/26 ended CSM București's run of titles: under Spanish coach Carlos Viver they won the Liga Florilor for the first time, losing once in twenty-two games, beat Râmnicu Vâlcea by ten goals in the Romanian Cup final and reached the Champions League quarter-finals. Ten players left in the summer, and the champions play in the Champions League for 2026/27, at the 3,007-seat TeraPlast Arena.",
+    "venue": "Complexul Sportiv TeraPlast Arena",
+    "capacity": 3007,
+    "primary_color": "#d7041e",
+    "secondary_color": "#010101"
+  },
+  {
+    "name": "SCM Râmnicu Vâlcea",
+    "slug": "scm-ramnicu-valcea",
+    "city": "Râmnicu Vâlcea",
+    "founded_year": 1973,
+    "description": "SCM Râmnicu Vâlcea is the heir to Romanian women's handball's historical powerhouse, the legendary CS Oltchim Râmnicu Vâlcea, which won 19 national titles before its dissolution. Under Florentin Pera the team finished fourth in 2025/26 and reached the Romanian Cup final, lost heavily to Gloria Bistrița. Vâlcea play in the EHF European League for 2026/27 and keep a deep connection to the city's handball heritage at the Sala Sporturilor Traian.",
+    "venue": "Sala Sporturilor Traian",
+    "capacity": 2375,
+    "primary_color": "#033265",
+    "secondary_color": "#bb0606"
+  },
+  {
+    "name": "Rapid București",
+    "slug": "rapid-bucuresti",
+    "city": "București",
+    "founded_year": 1934,
+    "description": "CS Rapid București is a Romanian professional handball club based in Giulești, in the north-west of Bucharest. Founded in 1934, it plays its home games at the Sala Rapid. Rapid won their first league championship in 1961 and their first European honour, the European Cup, in 1964; domestically the club has six league titles and one Romanian Cup, and internationally a Champions League, a European League and a European Cup. Seventh in 2025/26, well below expectations, Rapid replaced Laurent Bezeau with Montenegrin Dragan Adžić, a Champions League winner as a coach with Budućnost.",
+    "venue": "Sala Giulești",
+    "capacity": 1500,
+    "primary_color": "#91232b",
+    "secondary_color": "#ffffff"
+  },
+  {
+    "name": "CSM Slatina",
+    "slug": "csm-slatina",
+    "city": "Slatina",
+    "founded_year": 2009,
+    "description": "CSM Slatina kept their Liga Florilor place in 2025 through the promotion and relegation tournament, then finished a comfortable sixth in 2025/26. A club built on stability and local development, Slatina added Japanese pair Kaho Nakayama and Sakura Hauge in the summer and play at the small Sala LPS.",
+    "venue": "Sala LPS Slatina",
+    "capacity": 450,
+    "primary_color": "#2888b9",
+    "secondary_color": "#fdfefd"
+  },
+  {
+    "name": "CSM Târgu Jiu",
+    "slug": "csm-targu-jiu",
+    "city": "Târgu Jiu",
+    "founded_year": 2017,
+    "description": "CSM Târgu Jiu is a multi-sport club whose women's handball team represents the Gorj region in the Liga Florilor. Usually in the thick of the fight to stay up, Liviu Andrieș's side kept its place in 2025/26 by finishing tenth, the last safe spot, and plays at the Sala Sporturilor in Târgu Jiu.",
+    "venue": "Sala Sporturilor Târgu Jiu",
+    "capacity": 1223,
+    "primary_color": "#076cd4",
+    "secondary_color": "#72818f"
+  },
+  {
+    "name": "HC Zalău",
+    "slug": "hc-zalau",
+    "city": "Zalău",
+    "founded_year": 1978,
+    "description": "HC Zalău is a women's handball club from Zalău with a proud European record: it won the EHF Challenge Cup in 1995–96, took third place in the EHF Champions Trophy the same season, and reached the EHF Cup final in 2011–12, lost to Lada Togliatti. Led for decades by the legendary Gheorghe Tadici, Zalău is known for promoting young Romanian players. Eleventh in 2025/26, the club had to go through the promotion play-off and won all three games to stay in the top flight.",
+    "venue": "Sala Sporturilor \"Gheorghe Tadici\"",
+    "capacity": 950,
+    "primary_color": "#005dad",
+    "secondary_color": "#fffefe"
+  }
+]
