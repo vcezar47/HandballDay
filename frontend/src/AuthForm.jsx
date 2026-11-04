@@ -9,7 +9,6 @@ export default function AuthForm({ onLogin }) {
   const [displayName, setDisplayName] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const [info, setInfo] = useState('')
   const [loading, setLoading] = useState(false)
 
   const isLogin = mode === 'login'
@@ -17,24 +16,15 @@ export default function AuthForm({ onLogin }) {
   function switchMode(next) {
     setMode(next)
     setError('')
-    setInfo('')
   }
 
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
-    setInfo('')
     setLoading(true)
     try {
-      if (isLogin) {
-        const { user } = await login(email, password)
-        onLogin(user)
-      } else {
-        await register(email, displayName, password)
-        setMode('login')
-        setPassword('')
-        setInfo('Account created. You can log in now.')
-      }
+      const { user } = isLogin ? await login(email, password) : await register(email, displayName, password)
+      onLogin(user)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -112,7 +102,6 @@ export default function AuthForm({ onLogin }) {
         </label>
 
         {error && <p className="message error">{error}</p>}
-        {info && <p className="message success">{info}</p>}
 
         <button type="submit" className="primary" disabled={loading}>
           {loading ? 'Please wait...' : isLogin ? 'Log in' : 'Sign up'}

@@ -9,13 +9,23 @@ def register(client, **overrides):
     return client.post("/api/auth/register", json={**NEW, **overrides})
 
 
-def test_register_hashes_password_and_makes_a_fan(client, db):
+def login(client, email="ana@example.com", password=NEW["password"]):
+    return client.post("/api/auth/login", json={"email": email, "password": password})
+
+
+def test_register_hashes_password_and_logs_the_user_in(client, db):
     res = register(client)
     assert res.status_code == 201
     assert res.json()["user"]["email"] == "ana@example.com"
     assert res.json()["user"]["role"] == "fan"
     stored = db.scalar(select(User)).password_hash
     assert stored != NEW["password"] and stored.startswith("$argon2")
+    assert client.get("/api/auth/me").json()["email"] == "ana@example.com"
+
+
+def test_session_cookie_is_httponly_and_samesite(client):
+    header = register(client).headers["set-cookie"].lower()
+    assert "hd_session=" in header and "httponly" in header and "samesite=lax" in header
 
 
 def test_duplicate_email_is_a_conflict_whatever_the_case(client):
@@ -27,17 +37,37 @@ def test_duplicate_email_is_a_conflict_whatever_the_case(client):
 
 def test_login_ok(client):
     register(client)
-    res = client.post("/api/auth/login", json={"email": "ana@example.com", "password": NEW["password"]})
+    client.post("/api/auth/logout")
+    res = login(client)
     assert res.status_code == 200
-    assert res.json()["user"]["display_name"] == "Ana"
+    assert client.get("/api/auth/me").json()["display_name"] == "Ana"
 
 
 def test_wrong_password_and_unknown_email_look_the_same(client):
     register(client)
-    wrong = client.post("/api/auth/login", json={"email": "ana@example.com", "password": "nope"})
-    unknown = client.post("/api/auth/login", json={"email": "who@example.com", "password": "nope"})
+    wrong = login(client, password="nope")
+    unknown = login(client, email="who@example.com", password="nope")
     assert wrong.status_code == unknown.status_code == 401
     assert wrong.json() == unknown.json()
+
+
+def test_failed_login_does_not_start_a_session(client):
+    register(client)
+    client.post("/api/auth/logout")
+    login(client, password="nope")
+    assert client.get("/api/auth/me").status_code == 401
+
+
+def test_logout_ends_the_session(client):
+    register(client)
+    assert client.post("/api/auth/logout").status_code == 200
+    assert client.get("/api/auth/me").status_code == 401
+
+
+def test_guest_gets_401_on_me(client):
+    res = client.get("/api/auth/me")
+    assert res.status_code == 401
+    assert res.json()["code"] == "unauthenticated"
 
 
 def test_register_rejects_short_password_and_bad_email(client):
@@ -45,7 +75,14 @@ def test_register_rejects_short_password_and_bad_email(client):
     assert register(client, email="not-an-email").status_code == 422
 
 
-def test_sql_injection_input_is_just_a_wrong_password(client):
+def test_sql_injection_in_login_is_just_a_wrong_password(client):
     register(client)
-    res = client.post("/api/auth/login", json={"email": "ana@example.com", "password": "' OR 1=1 --"})
-    assert res.status_code == 401
+    assert login(client, password="' OR 1=1 --").status_code == 401
+    assert login(client, email="' OR 1=1 --").status_code == 422  # not an email at all
+
+
+def test_sql_injection_in_text_field_is_stored_as_plain_text(client, db):
+    name = "Robert'); DROP TABLE users;--"
+    register(client, display_name=name)
+    assert client.get("/api/auth/me").json()["display_name"] == name  # table still there, value untouched
+    assert db.scalar(select(User.display_name)) == name

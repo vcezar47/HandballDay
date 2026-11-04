@@ -44,6 +44,17 @@ npm install
 npm run dev                   # http://localhost:5173, proxies /api to the backend
 ```
 
+## Accounts and roles
+
+Registering makes a `fan` and logs you in (signed HttpOnly session cookie). Every POST needs the `X-CSRF-Token` header from `GET /api/csrf`; the frontend does this itself. To make staff or an admin (until the admin panel in M5):
+
+```bash
+python -m app.set_role you@example.com admin
+python -m app.set_role you@example.com staff rapid-bucuresti
+```
+
+Security events (register, login, failed login, logout, forbidden, CSRF rejection) go to `backend/logs/activity.log`, rotating at 1 MB.
+
 ## Tests
 
 ```bash

@@ -32,24 +32,24 @@ Legend: ⬜ not started · 🟡 partial · ✅ done
 | 2.04 | Images, text, tables, links | M2 | Club pages, fixture tables, nav and footer links, club colours, jersey images | ⬜ |
 | 3.01 | ≥3 classes | M0 | Models, repositories, services, errors, gateways | ✅ |
 | 3.02 | ≥1 interface | M3 | `IRepository`, `PaymentGateway` (Stripe and fake implementations), `FileValidator` | ⬜ |
-| 3.03 | Authentication | M1 | Email + argon2 hash, signed HttpOnly session cookie | ⬜ |
-| 3.04 | Authorization | M1 | Roles fan / staff / admin, dependency `require_role(...)`, ownership checks on tickets, orders and designs, staff limited to their own club | ⬜ |
+| 3.03 | Authentication | M1 | Email + argon2 hash, signed HttpOnly session cookie | ✅ |
+| 3.04 | Authorization | M1 | Roles fan / staff / admin, dependency `require_role(...)`, ownership checks on tickets, orders and designs, staff limited to their own club | ✅ |
 | 4.01 | Inheritance | M0 | Repositories extend a base, errors extend `AppError`, models extend mixins | ✅ |
-| 4.02 | ≥2 exception types | M1 | `AppError` family (validation, auth, forbidden, not found, conflict, payment) mapped to JSON by handlers | ⬜ |
+| 4.02 | ≥2 exception types | M1 | `AppError` family (validation, auth, forbidden, not found, conflict, payment) mapped to JSON by handlers | ✅ |
 | 4.03 | Image carousel | M2 | Home carousel of upcoming matches: autoplay, pause, arrows, dots, swipe, keyboard, reduced-motion aware | ⬜ |
 | 4.04 | Animation | M2, M4 | Existing flow background, page transitions, jersey preview recolouring live | ⬜ |
 | 5.01 | ≥2 CSS files, ≥10 properties | M2 | Split `styles.css` into `variables`, `base`, `layout`, `components`, `animations` | ⬜ |
 | 5.02 | Responsive | M2 | Mobile-first, breakpoints near 600 and 1024 px, screenshots at 390 / 768 / 1440 px in `docs/screenshots/` | ⬜ |
-| 6.01 | ≥5 unit tests | M1+ | pytest from M1 on, target 40+; a few Vitest tests for the jersey and carousel logic | ⬜ |
+| 6.01 | ≥5 unit tests | M1+ | pytest from M1 on, target 40+; a few Vitest tests for the jersey and carousel logic | 🟡 |
 | 6.02 | Git | M0 | This repo; small commits per task | 🟡 |
 | 6.03 | GitHub Actions CI | M0 | Backend tests against a Postgres service container, frontend lint and build | 🟡 |
-| 7.01 | Activity log file | M1, M3, M5 | `backend/logs/activity.log`, rotating; register, login, failures, orders, scans, admin actions; viewer in admin panel | ⬜ |
+| 7.01 | Activity log file | M1, M3, M5 | `backend/logs/activity.log`, rotating; register, login, failures, orders, scans, admin actions; viewer in admin panel | 🟡 |
 | 7.02 | Hosting | M6 | Apache VPS or equivalent, see decision D3 | ⬜ |
 | 8.01 | Lighthouse SEO ≥90 | M2, M6 | Per-page title, meta description, canonical, `robots.txt`, `sitemap.xml`, alt text, crawlable links; measured on the deployed site | ⬜ |
 | 8.02 | Stripe payments | M3 | Hosted Checkout Session in test mode, webhook with signature check, idempotent fulfilment | ⬜ |
-| 9.01 | CSRF | M1 | Double-submit token middleware plus SameSite=Lax, tested | ⬜ |
+| 9.01 | CSRF | M1 | Double-submit token middleware plus SameSite=Lax, tested | ✅ |
 | 9.02 | XSS | M2, M5 | React escaping only (no `dangerouslySetInnerHTML`), strict CSP, jersey text restricted to a safe character set, test with `<script>` payloads | ⬜ |
-| 9.03 | SQL injection | M1 | ORM only, bound parameters, Pydantic validation, test with `' OR 1=1 --` | ⬜ |
+| 9.03 | SQL injection | M1 | ORM only, bound parameters, Pydantic validation, test with `' OR 1=1 --` | ✅ |
 | 9.04 | Max 12 MB upload | M4 | Reject by `Content-Length` and again while streaming, so a lying header can't bypass it | ⬜ |
 | 9.05 | Allowed extensions | M4 | Whitelist png / jpg / jpeg / webp, checked on name and on real file content | ⬜ |
 | 10.01 | Rate limiting | M5 | slowapi: strict on login, register and checkout, loose elsewhere | ⬜ |
@@ -73,12 +73,12 @@ Each milestone ends with tests passing and a commit. Sizes: S ≈ an evening, M 
 
 Done when: `pytest` and CI are green on an empty-ish app and `npm run dev` works from the new folder.
 
-### M1: Auth and access control (M)
+### M1: Auth and access control (M) ✅ built; frontend route guards moved to M3
 - argon2 password hashing, register / login / logout / me, signed HttpOnly session cookie, `Secure` in production.
 - CSRF middleware and a `GET /api/csrf` endpoint; the frontend sends `X-CSRF-Token`.
 - Role dependencies, ownership helpers, `AppError` handlers.
 - Activity logger (rotating file).
-- Frontend: register form (reuse `AuthForm` and the eye toggle), route guards (UX only; the server is the real check).
+- Frontend: register form (reuse `AuthForm` and the eye toggle), route guards (UX only; the server is the real check). Guards wait for M3, when the first staff page exists to guard.
 - Tests: wrong password, duplicate email, CSRF rejected, guest 401, fan 403 on staff routes, SQL-injection input.
 
 Done when: barem 3.03, 3.04, 4.02, 9.01, 9.03 have a test each and the plaintext path is gone.

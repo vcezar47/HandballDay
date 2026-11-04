@@ -6,7 +6,8 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+BACKEND_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BACKEND_DIR / ".env")
 
 
 class Config:
@@ -21,6 +22,12 @@ class Config:
         self.db_password = os.getenv("DB_PASSWORD", "")
         self.db_name = os.getenv("DB_NAME", self.default_db_name)
         self.port = int(os.getenv("PORT", "3000"))
+        self.secret_key = os.getenv("SECRET_KEY", "dev-only-secret-change-me")
+        self.log_dir = BACKEND_DIR / "logs"
+
+    # Cookies only travel over HTTPS in production.
+    secure_cookies = False
+    session_max_age = 14 * 24 * 3600
 
 
 class DevConfig(Config):
@@ -35,16 +42,19 @@ class TestConfig(Config):
     def __init__(self) -> None:
         super().__init__()
         self.db_name = self.default_db_name
+        self.log_dir = BACKEND_DIR / "logs" / "test"
 
 
 class ProdConfig(Config):
     name = "prod"
     cors_origins: list[str] = []  # same origin behind the Apache proxy
+    secure_cookies = True
 
     def __init__(self) -> None:
         super().__init__()
-        if not os.getenv("DB_PASSWORD"):
-            raise RuntimeError("DB_PASSWORD must be set when APP_ENV=prod")
+        for var in ("DB_PASSWORD", "SECRET_KEY"):
+            if not os.getenv(var):
+                raise RuntimeError(f"{var} must be set when APP_ENV=prod")
 
 
 _CONFIGS = {"dev": DevConfig, "test": TestConfig, "prod": ProdConfig}

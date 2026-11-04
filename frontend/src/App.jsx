@@ -1,32 +1,29 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router'
+import { logout, me } from './api.js'
 import AuthForm from './AuthForm.jsx'
 import FlowBackground from './FlowBackground.jsx'
 import Home from './Home.jsx'
 
-const STORAGE_KEY = 'handballday-user'
-
-function loadUser() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY))
-  } catch {
-    return null
-  }
-}
-
 export default function App() {
-  const [user, setUser] = useState(loadUser)
+  // undefined = still asking the server, null = nobody logged in
+  const [user, setUser] = useState(undefined)
   const navigate = useNavigate()
   const { pathname } = useLocation()
 
+  useEffect(() => {
+    me()
+      .then(setUser)
+      .catch(() => setUser(null))
+  }, [])
+
   function handleLogin(u) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(u))
     setUser(u)
     navigate('/')
   }
 
-  function handleLogout() {
-    localStorage.removeItem(STORAGE_KEY)
+  async function handleLogout() {
+    await logout().catch(() => {}) // the cookie is cleared server-side; if the call fails we still show logged out
     setUser(null)
   }
 
@@ -34,11 +31,13 @@ export default function App() {
     <>
       <FlowBackground />
       <div className="stage" key={pathname}>
-        <Routes>
-          <Route path="/" element={<Home user={user} onLogout={handleLogout} />} />
-          <Route path="/login" element={user ? <Navigate to="/" replace /> : <AuthForm onLogin={handleLogin} />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        {user !== undefined && (
+          <Routes>
+            <Route path="/" element={<Home user={user} onLogout={handleLogout} />} />
+            <Route path="/login" element={user ? <Navigate to="/" replace /> : <AuthForm onLogin={handleLogin} />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        )}
       </div>
     </>
   )
