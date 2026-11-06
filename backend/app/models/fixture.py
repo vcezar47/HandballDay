@@ -2,9 +2,10 @@ import enum
 from datetime import datetime
 
 from sqlalchemy import CheckConstraint, DateTime, Enum, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base, IdMixin
+from .club import Club, Venue
 
 
 class FixtureStatus(enum.StrEnum):
@@ -25,6 +26,11 @@ class Fixture(IdMixin, Base):
         Enum(FixtureStatus, native_enum=False, values_callable=lambda e: [m.value for m in e]),
         default=FixtureStatus.SCHEDULED,
     )
+
+    # Eager: every fixture view shows both clubs and the venue, so avoid one query per row.
+    home_club: Mapped[Club] = relationship(foreign_keys=[home_club_id], lazy="joined")
+    away_club: Mapped[Club] = relationship(foreign_keys=[away_club_id], lazy="joined")
+    venue: Mapped[Venue] = relationship(lazy="joined")
 
 
 class FixtureZone(Base):

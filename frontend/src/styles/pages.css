@@ -1,0 +1,311 @@
+/* Public site: navigation, clubs, fixture tables, carousel. */
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.site-header nav a,
+.link-btn {
+  padding: 4px 0;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.9rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.site-header nav a:hover,
+.link-btn:hover {
+  color: var(--text);
+}
+
+.site-header nav a.active {
+  border-bottom-color: var(--accent-2);
+  color: var(--text);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.sub {
+  display: block;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+.prose {
+  max-width: 68ch;
+  line-height: 1.65;
+}
+
+.vs {
+  color: var(--muted);
+  font-size: 0.8em;
+  text-transform: uppercase;
+}
+
+.pill {
+  display: inline-block;
+  padding: 6px 16px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  font-size: 0.8rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.pill:hover {
+  border-color: var(--accent-2);
+  background: rgb(79 209 255 / 0.08);
+}
+
+.ghost.small {
+  padding: 9px 20px;
+  letter-spacing: 0.15em;
+  animation: none;
+}
+
+/* ---- clubs ---- */
+
+.club-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--club);
+  border-radius: 12px;
+  background: var(--glass);
+  color: var(--text);
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.club-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.4);
+}
+
+.facts div {
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--glass);
+}
+
+.facts dt {
+  color: var(--muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.facts dd {
+  margin: 4px 0 0;
+}
+
+.swatch {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  margin-right: 6px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+}
+
+.badge {
+  flex: none;
+}
+
+/* ---- tables ---- */
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--glass);
+}
+
+.teams {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+}
+
+.side {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.when {
+  white-space: nowrap;
+}
+
+/* phones: one team per line */
+@media (max-width: 599px) {
+  .teams {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+  th,
+  td {
+    padding: 10px 8px;
+  }
+}
+
+.teams a,
+.team {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.teams a:hover,
+.team:hover {
+  text-decoration: underline;
+}
+
+.team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.match-when {
+  margin: 0 0 8px;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* ---- carousel ---- */
+
+.carousel {
+  max-width: 560px;
+  margin: 44px auto 0;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  animation: fade-in 2s 2.2s ease both;
+}
+
+.carousel:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.carousel-viewport {
+  overflow: hidden;
+  border-radius: 18px 18px 0 0;
+  touch-action: pan-y; /* vertical scrolling stays native, horizontal drags are our swipe */
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide {
+  flex: 0 0 100%;
+  padding: 26px 20px 22px;
+}
+
+.slide h3 {
+  margin: 14px 0 6px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.slide p {
+  margin: 0 0 14px;
+}
+
+.slide-date {
+  color: var(--accent-2);
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.slide-teams {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+
+.carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 12px 14px;
+}
+
+.icon-btn {
+  min-width: 36px;
+  min-height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.icon-btn:hover {
+  border-color: var(--accent-2);
+}
+
+.dots {
+  display: flex;
+  gap: 4px;
+}
+
+/* 24px hit area around a 10px dot */
+.dot {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.dot::after {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background 0.2s, transform 0.2s;
+}
+
+.dot.active::after {
+  background: var(--accent-2);
+  transform: scale(1.3);
+}

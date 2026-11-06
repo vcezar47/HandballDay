@@ -27,28 +27,28 @@ Legend: ⬜ not started · 🟡 partial · ✅ done
 | # | Criterion | Milestone | How we satisfy it | Status |
 |---|---|:-:|---|:-:|
 | 2.01 | DB in 3NF | M0 | Schema in section 4, written up in `docs/DATABASE.md` with an ER diagram; price snapshots on line items justified there | ✅ |
-| 2.02 | ≥4 use cases | M2–M5 | UC1–UC7 above | ⬜ |
+| 2.02 | ≥4 use cases | M2–M5 | UC1–UC7 above (UC1 and UC2 done) | 🟡 |
 | 2.03 | MVC / Repository | M0 | `models/`, `repositories/` (with `IRepository`), `services/`, `routers/` (controllers), React pages as views | ✅ |
-| 2.04 | Images, text, tables, links | M2 | Club pages, fixture tables, nav and footer links, club colours, jersey images | ⬜ |
+| 2.04 | Images, text, tables, links | M2 | Club pages, fixture tables, nav and footer links, club colours, logo and club badges (SVG; real crests stay out of the repo) | ✅ |
 | 3.01 | ≥3 classes | M0 | Models, repositories, services, errors, gateways | ✅ |
 | 3.02 | ≥1 interface | M3 | `IRepository`, `PaymentGateway` (Stripe and fake implementations), `FileValidator` | ⬜ |
 | 3.03 | Authentication | M1 | Email + argon2 hash, signed HttpOnly session cookie | ✅ |
 | 3.04 | Authorization | M1 | Roles fan / staff / admin, dependency `require_role(...)`, ownership checks on tickets, orders and designs, staff limited to their own club | ✅ |
 | 4.01 | Inheritance | M0 | Repositories extend a base, errors extend `AppError`, models extend mixins | ✅ |
 | 4.02 | ≥2 exception types | M1 | `AppError` family (validation, auth, forbidden, not found, conflict, payment) mapped to JSON by handlers | ✅ |
-| 4.03 | Image carousel | M2 | Home carousel of upcoming matches: autoplay, pause, arrows, dots, swipe, keyboard, reduced-motion aware | ⬜ |
-| 4.04 | Animation | M2, M4 | Existing flow background, page transitions, jersey preview recolouring live | ⬜ |
-| 5.01 | ≥2 CSS files, ≥10 properties | M2 | Split `styles.css` into `variables`, `base`, `layout`, `components`, `animations` | ⬜ |
-| 5.02 | Responsive | M2 | Mobile-first, breakpoints near 600 and 1024 px, screenshots at 390 / 768 / 1440 px in `docs/screenshots/` | ⬜ |
+| 4.03 | Image carousel | M2 | Home carousel of upcoming matches: autoplay, pause, arrows, dots, swipe, keyboard, reduced-motion aware | ✅ |
+| 4.04 | Animation | M2, M4 | Existing flow background, page transitions, jersey preview recolouring live | 🟡 |
+| 5.01 | ≥2 CSS files, ≥10 properties | M2 | Split `styles.css` into `variables`, `base`, `layout`, `components`, `pages`, `animations` | ✅ |
+| 5.02 | Responsive | M2 | Mobile-first, breakpoints near 600 and 1024 px, screenshots at 390 / 768 / 1440 px in `docs/screenshots/` | ✅ |
 | 6.01 | ≥5 unit tests | M1+ | pytest from M1 on, target 40+; a few Vitest tests for the jersey and carousel logic | 🟡 |
 | 6.02 | Git | M0 | This repo; small commits per task | 🟡 |
 | 6.03 | GitHub Actions CI | M0 | Backend tests against a Postgres service container, frontend lint and build | 🟡 |
 | 7.01 | Activity log file | M1, M3, M5 | `backend/logs/activity.log`, rotating; register, login, failures, orders, scans, admin actions; viewer in admin panel | 🟡 |
 | 7.02 | Hosting | M6 | Apache VPS or equivalent, see decision D3 | ⬜ |
-| 8.01 | Lighthouse SEO ≥90 | M2, M6 | Per-page title, meta description, canonical, `robots.txt`, `sitemap.xml`, alt text, crawlable links; measured on the deployed site | ⬜ |
+| 8.01 | Lighthouse SEO ≥90 | M2, M6 | Per-page title, meta description, canonical, `robots.txt`, `sitemap.xml`, alt text, crawlable links; measured on the deployed site | 🟡 |
 | 8.02 | Stripe payments | M3 | Hosted Checkout Session in test mode, webhook with signature check, idempotent fulfilment | ⬜ |
 | 9.01 | CSRF | M1 | Double-submit token middleware plus SameSite=Lax, tested | ✅ |
-| 9.02 | XSS | M2, M5 | React escaping only (no `dangerouslySetInnerHTML`), strict CSP, jersey text restricted to a safe character set, test with `<script>` payloads | ⬜ |
+| 9.02 | XSS | M2, M5 | React escaping only (no `dangerouslySetInnerHTML`), strict CSP, jersey text restricted to a safe character set, test with `<script>` payloads | 🟡 |
 | 9.03 | SQL injection | M1 | ORM only, bound parameters, Pydantic validation, test with `' OR 1=1 --` | ✅ |
 | 9.04 | Max 12 MB upload | M4 | Reject by `Content-Length` and again while streaming, so a lying header can't bypass it | ⬜ |
 | 9.05 | Allowed extensions | M4 | Whitelist png / jpg / jpeg / webp, checked on name and on real file content | ⬜ |
@@ -83,11 +83,11 @@ Done when: `pytest` and CI are green on an empty-ish app and `npm run dev` works
 
 Done when: barem 3.03, 3.04, 4.02, 9.01, 9.03 have a test each and the plaintext path is gone.
 
-### M2: Clubs, fixtures, public site (M)
+### M2: Clubs, fixtures, public site (M) ✅ built; Lighthouse SEO is measured in M6, Vitest tests not added
 - Endpoints and pages: club list, club page, fixture list with filters, fixture detail with zones and seats left.
 - Home page: carousel of upcoming matches; keep the "Something is taking shape" hero as the landing.
-- SEO component (title, description, canonical), `robots.txt`, `sitemap.xml`.
-- Responsive pass and screenshots at three widths.
+- SEO component (title, description, canonical), `robots.txt`, `sitemap.xml` (served by the backend from the database, `PUBLIC_URL` sets the host).
+- Responsive pass and screenshots at three widths (`docs/screenshots/`).
 
 Done when: a guest can browse everything (UC1), and 2.04, 4.03, 5.01, 5.02 have proof.
 

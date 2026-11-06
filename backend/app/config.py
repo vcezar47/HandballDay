@@ -24,6 +24,8 @@ class Config:
         self.port = int(os.getenv("PORT", "3000"))
         self.secret_key = os.getenv("SECRET_KEY", "dev-only-secret-change-me")
         self.log_dir = BACKEND_DIR / "logs"
+        # Absolute URL of the site, for sitemap.xml and robots.txt.
+        self.public_url = os.getenv("PUBLIC_URL", "http://localhost:5173").rstrip("/")
 
     # Cookies only travel over HTTPS in production.
     secure_cookies = False

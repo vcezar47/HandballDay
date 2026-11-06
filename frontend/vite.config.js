@@ -11,7 +11,10 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 5173,
       proxy: {
+        // sitemap.xml and robots.txt are built from the database, so the backend serves them
         '/api': `http://localhost:${backendPort}`,
+        '/sitemap.xml': `http://localhost:${backendPort}`,
+        '/robots.txt': `http://localhost:${backendPort}`,
       },
     },
   }

@@ -1,5 +1,5 @@
 from sqlalchemy import ForeignKey, String, Text, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base, IdMixin
 
@@ -31,6 +31,8 @@ class Club(IdMixin, Base):
     description: Mapped[str] = mapped_column(Text)
     primary_color: Mapped[str] = mapped_column(String(7))  # "#rrggbb"
     secondary_color: Mapped[str] = mapped_column(String(7))
+
+    venue: Mapped[Venue] = relationship(lazy="joined")
 
 
 class Zone(IdMixin, Base):

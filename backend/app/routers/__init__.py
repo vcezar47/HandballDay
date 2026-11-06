@@ -1,3 +1,3 @@
-from . import auth, csrf, health
+from . import auth, catalog, csrf, health, seo
 
-__all__ = ["auth", "csrf", "health"]
+__all__ = ["auth", "catalog", "csrf", "health", "seo"]

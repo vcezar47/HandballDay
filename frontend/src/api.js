@@ -42,3 +42,12 @@ export const register = (email, displayName, password) =>
 export const login = (email, password) => request('POST', '/auth/login', { email, password })
 export const logout = () => request('POST', '/auth/logout')
 export const me = () => request('GET', '/auth/me')
+
+export const getClubs = () => request('GET', '/clubs')
+export const getClub = (slug) => request('GET', `/clubs/${encodeURIComponent(slug)}`)
+export const getFixture = (id) => request('GET', `/fixtures/${encodeURIComponent(id)}`)
+// params: { club, date_from, date_to, limit }; empty values are left out
+export const getFixtures = (params = {}) => {
+  const query = new URLSearchParams(Object.entries(params).filter(([, v]) => v)).toString()
+  return request('GET', `/fixtures${query ? `?${query}` : ''}`)
+}
