@@ -26,6 +26,9 @@ class Config:
         self.log_dir = BACKEND_DIR / "logs"
         # Absolute URL of the site, for sitemap.xml and robots.txt.
         self.public_url = os.getenv("PUBLIC_URL", "http://localhost:5173").rstrip("/")
+        # Stripe test-mode keys (sk_test_..., whsec_...); empty means payments are not configured.
+        self.stripe_secret_key = os.getenv("STRIPE_SECRET_KEY", "")
+        self.stripe_webhook_secret = os.getenv("STRIPE_WEBHOOK_SECRET", "")
 
     # Cookies only travel over HTTPS in production.
     secure_cookies = False
@@ -45,6 +48,7 @@ class TestConfig(Config):
         super().__init__()
         self.db_name = self.default_db_name
         self.log_dir = BACKEND_DIR / "logs" / "test"
+        self.stripe_secret_key = self.stripe_webhook_secret = ""  # tests never reach the real Stripe
 
 
 class ProdConfig(Config):
@@ -54,7 +58,7 @@ class ProdConfig(Config):
 
     def __init__(self) -> None:
         super().__init__()
-        for var in ("DB_PASSWORD", "SECRET_KEY"):
+        for var in ("DB_PASSWORD", "SECRET_KEY", "STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"):
             if not os.getenv(var):
                 raise RuntimeError(f"{var} must be set when APP_ENV=prod")
 

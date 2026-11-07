@@ -43,6 +43,16 @@ export const login = (email, password) => request('POST', '/auth/login', { email
 export const logout = () => request('POST', '/auth/logout')
 export const me = () => request('GET', '/auth/me')
 
+export const checkout = (fixtureId, zoneId, quantity) =>
+  request('POST', '/checkout', { fixture_id: fixtureId, zone_id: zoneId, quantity })
+export const getTickets = () => request('GET', '/tickets')
+
+export const getStaffFixtures = () => request('GET', '/staff/fixtures')
+export const getStaffZones = () => request('GET', '/staff/zones')
+export const createFixture = (body) => request('POST', '/staff/fixtures', body)
+export const updateFixture = (id, body) => request('PATCH', `/staff/fixtures/${id}`, body)
+export const scanTicket = (code) => request('POST', '/staff/scan', { code })
+
 export const getClubs = () => request('GET', '/clubs')
 export const getClub = (slug) => request('GET', `/clubs/${encodeURIComponent(slug)}`)
 export const getFixture = (id) => request('GET', `/fixtures/${encodeURIComponent(id)}`)

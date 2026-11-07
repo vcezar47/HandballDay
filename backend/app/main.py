@@ -9,7 +9,7 @@ from .config import get_config
 from .db import ensure_database, get_engine
 from .errors import AppError, app_error_handler
 from .models import Base
-from .routers import auth, catalog, csrf, health, seo
+from .routers import auth, catalog, csrf, health, orders, seo, staff
 from .security.csrf import CSRFMiddleware
 from .seed import ensure_roles
 
@@ -45,6 +45,8 @@ def create_app() -> FastAPI:
     app.include_router(csrf.router)
     app.include_router(auth.router)
     app.include_router(catalog.router)
+    app.include_router(orders.router)
+    app.include_router(staff.router)
     app.include_router(seo.router)
     return app
 

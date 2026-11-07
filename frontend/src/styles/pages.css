@@ -309,3 +309,118 @@
   background: var(--accent-2);
   transform: scale(1.3);
 }
+
+/* ---- buying, tickets, staff ---- */
+
+.buy {
+  max-width: 420px;
+  margin-top: 12px;
+}
+
+.total {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.small {
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+.narrow {
+  max-width: 560px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 20px;
+}
+
+.tickets {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr));
+  gap: 16px;
+  padding: 0;
+  margin: 20px 0 0;
+  list-style: none;
+}
+
+.ticket {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--glass);
+}
+
+.ticket h2 {
+  margin: 0 0 6px;
+  font-size: 1rem;
+}
+
+.ticket p {
+  margin: 0 0 4px;
+}
+
+.ticket.used .qr {
+  opacity: 0.35;
+}
+
+.qr {
+  display: grid;
+  place-items: center;
+  padding: 2px;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.chip {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 12px;
+  border-radius: 999px;
+  background: var(--success-bg);
+  color: var(--success-text);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.chip.used {
+  background: rgb(255 255 255 / 0.08);
+  color: var(--muted);
+}
+
+fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+legend {
+  padding: 0 6px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.zone-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 12px;
+}
+
+.zone-row strong {
+  grid-column: 1 / -1;
+}
+
+.scan-result {
+  margin-top: 16px;
+  font-size: 1rem;
+}

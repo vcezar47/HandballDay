@@ -20,6 +20,8 @@ from ..config import get_config
 COOKIE = "hd_csrf"
 HEADER = "x-csrf-token"
 SAFE_METHODS = {"GET", "HEAD", "OPTIONS"}
+# Called by Stripe's servers, which have no cookie; the request is authenticated by its signature instead.
+EXEMPT_PATHS = {"/api/webhooks/stripe"}
 
 
 def _sign(nonce: str) -> str:
@@ -41,7 +43,7 @@ def is_valid_token(token: str | None) -> bool:
 
 class CSRFMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
-        if request.method not in SAFE_METHODS:
+        if request.method not in SAFE_METHODS and request.url.path not in EXEMPT_PATHS:
             cookie = request.cookies.get(COOKIE)
             header = request.headers.get(HEADER)
             if not (cookie and header and hmac.compare_digest(cookie.encode(), header.encode()) and is_valid_token(cookie)):

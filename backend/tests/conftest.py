@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session  # noqa: E402
 
 from app.activity import LOGGER_NAME, _logger  # noqa: E402
 from app.db import ensure_database, get_db, get_engine  # noqa: E402
+from app.gateways import FakeGateway, get_gateway  # noqa: E402
 from app.main import app  # noqa: E402
 from app.models import Base, User  # noqa: E402
 from app.repositories import RoleRepository, UserRepository  # noqa: E402
@@ -55,16 +56,30 @@ def make_client(target_app, db, csrf=True) -> TestClient:
 
 
 @pytest.fixture
-def client(db):
-    yield make_client(app, db)
+def gateway():
+    """Stands in for Stripe; the test can inspect what checkout asked for."""
+    return FakeGateway()
+
+
+@pytest.fixture
+def client(db, gateway):
+    client = make_client(app, db)
+    app.dependency_overrides[get_gateway] = lambda: gateway
+    yield client
     app.dependency_overrides.clear()
 
 
 @pytest.fixture
-def raw_client(db):
+def raw_client(db, gateway):
     """No CSRF token: for testing that the middleware refuses."""
-    yield make_client(app, db, csrf=False)
+    client = make_client(app, db, csrf=False)
+    app.dependency_overrides[get_gateway] = lambda: gateway
+    yield client
     app.dependency_overrides.clear()
+
+
+def log_in(client, email):
+    assert client.post("/api/auth/login", json={"email": email, "password": PASSWORD}).status_code == 200
 
 
 @pytest.fixture

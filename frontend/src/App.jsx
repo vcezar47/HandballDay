@@ -9,6 +9,11 @@ import Fixtures from './Fixtures.jsx'
 import FlowBackground from './FlowBackground.jsx'
 import Home from './Home.jsx'
 import Layout from './Layout.jsx'
+import RequireRole from './RequireRole.jsx'
+import StaffFixtureForm from './StaffFixtureForm.jsx'
+import StaffFixtures from './StaffFixtures.jsx'
+import StaffScan from './StaffScan.jsx'
+import Tickets from './Tickets.jsx'
 
 export default function App() {
   // undefined = still asking the server, null = nobody logged in
@@ -44,7 +49,12 @@ export default function App() {
               <Route path="/clubs" element={<Clubs />} />
               <Route path="/clubs/:slug" element={<ClubPage />} />
               <Route path="/fixtures" element={<Fixtures />} />
-              <Route path="/fixtures/:id" element={<FixtureDetail />} />
+              <Route path="/fixtures/:id" element={<FixtureDetail user={user} />} />
+              <Route path="/tickets" element={<RequireRole user={user}><Tickets /></RequireRole>} />
+              <Route path="/staff" element={<RequireRole user={user} roles={['staff']}><StaffFixtures /></RequireRole>} />
+              <Route path="/staff/fixtures/new" element={<RequireRole user={user} roles={['staff']}><StaffFixtureForm /></RequireRole>} />
+              <Route path="/staff/fixtures/:id" element={<RequireRole user={user} roles={['staff']}><StaffFixtureForm /></RequireRole>} />
+              <Route path="/staff/scan" element={<RequireRole user={user} roles={['staff', 'admin']}><StaffScan /></RequireRole>} />
               <Route path="/login" element={user ? <Navigate to="/" replace /> : <AuthForm onLogin={handleLogin} />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

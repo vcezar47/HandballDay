@@ -11,6 +11,9 @@ export default function Layout({ user, onLogout, children }) {
         <nav aria-label="Main">
           <NavLink to="/clubs">Clubs</NavLink>
           <NavLink to="/fixtures">Fixtures</NavLink>
+          {user && <NavLink to="/tickets">My tickets</NavLink>}
+          {user?.role === 'staff' && <NavLink to="/staff">Staff</NavLink>}
+          {user?.role === 'admin' && <NavLink to="/staff/scan">Scan</NavLink>}
           {user && (
             <button type="button" className="link-btn" onClick={onLogout}>
               Leave ({user.display_name})

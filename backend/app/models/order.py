@@ -24,6 +24,7 @@ class PaymentStatus(enum.StrEnum):
 
 
 class TicketStatus(enum.StrEnum):
+    PENDING = "pending"  # seat held while the order waits for payment
     VALID = "valid"
     USED = "used"
     CANCELLED = "cancelled"

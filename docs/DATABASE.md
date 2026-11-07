@@ -42,6 +42,7 @@ erDiagram
 - **Price snapshots**: `tickets.price_bani` and `jersey_items.price_bani` copy the price at purchase time. This is not a 3NF violation: it records a historical fact (what was paid), which is different from the current `fixture_zones.price_bani` and must not change when a fixture is repriced.
 - **A ticket's zone must be on sale**: `tickets (fixture_id, zone_id)` is a composite foreign key to `fixture_zones`, so the database refuses a ticket for a zone that was never put on sale for that fixture.
 - **Not enforced by the database** (checked in services instead): a fixture's zones belong to the fixture's venue, and `users.club_id` is set only for staff.
+- **Seats are held by pending tickets**: checkout inserts the order's tickets as `pending` inside the same transaction that counts the seats (the `fixture_zones` row is locked `FOR UPDATE`), so two buyers cannot take the last seat. A pending ticket counts as taken for 35 minutes after its order was created; after that the hold is ignored, so abandoned checkouts free their seats without a cleanup job. Payment turns the tickets `valid`; an expired or failed payment turns them `cancelled`.
 - **Enums** (`fixtures.status`, `orders.status`, `payments.status`, `tickets.status`) are stored as text with the allowed values defined in the model enums.
 - **Activity log** is a file, not a table (barem 7.01).
 - **Players** are left out until M2 (optional roster).

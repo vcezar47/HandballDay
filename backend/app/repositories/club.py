@@ -2,8 +2,9 @@ from datetime import datetime
 
 from sqlalchemy import func, select
 
-from ..models import Club, Fixture, FixtureStatus, FixtureZone, Ticket, TicketStatus, Zone
+from ..models import Club, Fixture, FixtureStatus, FixtureZone, Ticket, Zone
 from .base import SqlRepository
+from .order import taken_seats
 
 
 class ClubRepository(SqlRepository[Club]):
@@ -36,15 +37,11 @@ class FixtureRepository(SqlRepository[Fixture]):
             q = q.where(Fixture.kickoff_at < end)
         return list(self.db.scalars(q.order_by(Fixture.kickoff_at, Fixture.id).limit(limit)))
 
-    def zones(self, fixture_id: int) -> list[dict]:
-        """Zones on sale for a fixture, dearest first, with the seats not yet sold."""
+    def zones(self, fixture_id: int, now: datetime) -> list[dict]:
+        """Zones on sale for a fixture, dearest first, with the seats not yet taken."""
         sold = (
             select(func.count(Ticket.id))
-            .where(
-                Ticket.fixture_id == FixtureZone.fixture_id,
-                Ticket.zone_id == FixtureZone.zone_id,
-                Ticket.status != TicketStatus.CANCELLED,
-            )
+            .where(Ticket.fixture_id == FixtureZone.fixture_id, Ticket.zone_id == FixtureZone.zone_id, taken_seats(now))
             .scalar_subquery()
         )
         rows = self.db.execute(
@@ -58,3 +55,18 @@ class FixtureRepository(SqlRepository[Fixture]):
              "seats_left": max(r.quota - r.sold, 0)}
             for r in rows
         ]
+
+    def lock_zone(self, fixture_id: int, zone_id: int) -> FixtureZone | None:
+        """The zone's sale row, locked until the transaction ends so only one buyer counts seats at a time."""
+        q = select(FixtureZone).where(FixtureZone.fixture_id == fixture_id, FixtureZone.zone_id == zone_id)
+        return self.db.scalar(q.with_for_update())
+
+    def get_zone(self, fixture_id: int, zone_id: int) -> FixtureZone | None:
+        return self.db.get(FixtureZone, (fixture_id, zone_id))
+
+    def venue_zones(self, venue_id: int) -> list[Zone]:
+        return list(self.db.scalars(select(Zone).where(Zone.venue_id == venue_id).order_by(Zone.id)))
+
+    def for_home_club(self, club_id: int) -> list[Fixture]:
+        """Every fixture a club hosts, past and cancelled included."""
+        return list(self.db.scalars(select(Fixture).where(Fixture.home_club_id == club_id).order_by(Fixture.kickoff_at, Fixture.id)))

@@ -31,7 +31,7 @@ Legend: ⬜ not started · 🟡 partial · ✅ done
 | 2.03 | MVC / Repository | M0 | `models/`, `repositories/` (with `IRepository`), `services/`, `routers/` (controllers), React pages as views | ✅ |
 | 2.04 | Images, text, tables, links | M2 | Club pages, fixture tables, nav and footer links, club colours, logo and club badges (SVG; real crests stay out of the repo) | ✅ |
 | 3.01 | ≥3 classes | M0 | Models, repositories, services, errors, gateways | ✅ |
-| 3.02 | ≥1 interface | M3 | `IRepository`, `PaymentGateway` (Stripe and fake implementations), `FileValidator` | ⬜ |
+| 3.02 | ≥1 interface | M3 | `IRepository`, `PaymentGateway` (Stripe and fake implementations), `FileValidator` | 🟡 |
 | 3.03 | Authentication | M1 | Email + argon2 hash, signed HttpOnly session cookie | ✅ |
 | 3.04 | Authorization | M1 | Roles fan / staff / admin, dependency `require_role(...)`, ownership checks on tickets, orders and designs, staff limited to their own club | ✅ |
 | 4.01 | Inheritance | M0 | Repositories extend a base, errors extend `AppError`, models extend mixins | ✅ |
@@ -46,7 +46,7 @@ Legend: ⬜ not started · 🟡 partial · ✅ done
 | 7.01 | Activity log file | M1, M3, M5 | `backend/logs/activity.log`, rotating; register, login, failures, orders, scans, admin actions; viewer in admin panel | 🟡 |
 | 7.02 | Hosting | M6 | Apache VPS or equivalent, see decision D3 | ⬜ |
 | 8.01 | Lighthouse SEO ≥90 | M2, M6 | Per-page title, meta description, canonical, `robots.txt`, `sitemap.xml`, alt text, crawlable links; measured on the deployed site | 🟡 |
-| 8.02 | Stripe payments | M3 | Hosted Checkout Session in test mode, webhook with signature check, idempotent fulfilment | ⬜ |
+| 8.02 | Stripe payments | M3 | Hosted Checkout Session in test mode, webhook with signature check, idempotent fulfilment; a test-card purchase was run end to end | ✅ |
 | 9.01 | CSRF | M1 | Double-submit token middleware plus SameSite=Lax, tested | ✅ |
 | 9.02 | XSS | M2, M5 | React escaping only (no `dangerouslySetInnerHTML`), strict CSP, jersey text restricted to a safe character set, test with `<script>` payloads | 🟡 |
 | 9.03 | SQL injection | M1 | ORM only, bound parameters, Pydantic validation, test with `' OR 1=1 --` | ✅ |
@@ -91,7 +91,7 @@ Done when: barem 3.03, 3.04, 4.02, 9.01, 9.03 have a test each and the plaintext
 
 Done when: a guest can browse everything (UC1), and 2.04, 4.03, 5.01, 5.02 have proof.
 
-### M3: Tickets, Stripe, QR, staff tools (L)
+### M3: Tickets, Stripe, QR, staff tools (L) ✅ built and checked with a real Stripe test purchase; no camera scanning
 - `PaymentGateway` interface with `StripeGateway` and `FakeGateway` (used in tests).
 - Checkout: create an order and a Stripe Checkout Session; webhook `checkout.session.completed` verifies the signature and issues tickets once (idempotent on the session id).
 - Capacity is enforced inside one transaction, so two fans can't take the last seat.

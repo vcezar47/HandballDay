@@ -17,7 +17,8 @@ backend/app/
   services/       business rules; own the transaction
   routers/        HTTP controllers
   schemas/        Pydantic request/response models
-  security/       password hashing
+  gateways/       PaymentGateway interface: Stripe and a fake for tests
+  security/       passwords, sessions, CSRF, role checks
   seed/           demo data (clubs.json, fixtures, zones)
   errors.py       AppError family, mapped to JSON
   config.py       dev / test / prod settings (APP_ENV)
@@ -54,6 +55,24 @@ python -m app.set_role you@example.com staff rapid-bucuresti
 ```
 
 Security events (register, login, failed login, logout, forbidden, CSRF rejection) go to `backend/logs/activity.log`, rotating at 1 MB.
+
+## Payments (Stripe test mode)
+
+Without keys the API runs, but checkout answers "Payments are not configured". To try a purchase:
+
+1. In the Stripe dashboard (test mode) copy the secret key into `backend/.env` as `STRIPE_SECRET_KEY`.
+2. Install the [Stripe CLI](https://docs.stripe.com/stripe-cli) and forward webhooks to the backend:
+   ```bash
+   stripe login   # once, if the CLI asks for it
+   stripe listen --events checkout.session.completed,checkout.session.expired --forward-to localhost:3000/api/webhooks/stripe
+   ```
+   The backend only acts on those two events.
+   It prints a `whsec_...` signing secret: put it in `backend/.env` as `STRIPE_WEBHOOK_SECRET`, then restart the backend.
+3. Buy a ticket on a fixture page with card `4242 4242 4242 4242`, any future date, any CVC. Stripe sends `checkout.session.completed` to the webhook, the order becomes paid, and the QR ticket appears under "My tickets".
+
+Without `stripe listen` running the order stays pending: seats are held for 35 minutes and then released.
+
+Staff (see roles above) manage their club's fixtures under "Staff" and check tickets on "Scan tickets" by typing or scanning the code.
 
 ## Tests
 

@@ -50,4 +50,4 @@ class CatalogService:
         fixture = self.fixtures.get(fixture_id)
         if fixture is None:
             raise NotFoundError("Fixture not found")
-        return FixtureDetail.model_validate(fixture).model_copy(update={"zones": [ZoneOut(**z) for z in self.fixtures.zones(fixture_id)]})
+        return FixtureDetail.model_validate(fixture).model_copy(update={"zones": [ZoneOut(**z) for z in self.fixtures.zones(fixture_id, datetime.now(timezone.utc))]})
