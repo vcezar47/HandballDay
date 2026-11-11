@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { QRCodeSVG } from 'qrcode.react'
-import { getTickets } from './api.js'
-import { formatDate, formatTime } from './format.js'
+import { getJerseys, getTickets } from './api.js'
+import { formatDate, formatPrice, formatTime } from './format.js'
+import Jersey from './Jersey.jsx'
 import Seo from './Seo.jsx'
 import Status from './Status.jsx'
 
@@ -13,6 +14,7 @@ export default function Tickets() {
   const [params] = useSearchParams()
   const justPaid = params.get('paid') === '1'
   const [tickets, setTickets] = useState(null)
+  const [jerseys, setJerseys] = useState([])
   const [error, setError] = useState('')
   const [polls, setPolls] = useState(0)
 
@@ -20,8 +22,12 @@ export default function Tickets() {
   // so right after paying we ask a few times before concluding that nothing arrived.
   useEffect(() => {
     let stale = false
-    getTickets()
-      .then((data) => !stale && setTickets(data))
+    Promise.all([getTickets(), getJerseys()])
+      .then(([t, j]) => {
+        if (stale) return
+        setTickets(t)
+        setJerseys(j)
+      })
       .catch((err) => !stale && setError(err.message))
     return () => {
       stale = true
@@ -45,6 +51,37 @@ export default function Tickets() {
           {justPaid ? 'Your tickets are being issued, this page updates by itself.' : 'No tickets yet.'}{' '}
           <Link to="/fixtures">Browse fixtures</Link>
         </p>
+      )}
+      {jerseys.length > 0 && (
+        <>
+          <h2>My jerseys</h2>
+          <ul className="tickets">
+            {jerseys.map((j) => (
+              <li key={j.id} className="ticket">
+                <div className="jersey-thumb">
+                  <Jersey
+                    template={j.template}
+                    primary={j.primary_color}
+                    secondary={j.secondary_color}
+                    name={j.name_text}
+                    number={j.number}
+                    logoUrl={j.logo_upload_id ? `/api/uploads/${j.logo_upload_id}` : undefined}
+                  />
+                </div>
+                <div>
+                  <h2>
+                    {j.club.name} #{j.number} {j.name_text}
+                  </h2>
+                  <p>Size {j.size} &middot; {formatPrice(j.price_bani)}</p>
+                  <p className="muted">
+                    Pick up at {j.pickup.home.name} vs {j.pickup.away.name}, {formatDate(j.pickup.kickoff_at)}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <h2>Tickets</h2>
+        </>
       )}
       {tickets && (
         <ul className="tickets">

@@ -4,6 +4,7 @@ from pydantic import AwareDatetime, BaseModel, Field
 
 from ..models import FixtureStatus
 from .catalog import FixtureOut
+from .jersey import JerseyRequest
 
 MAX_TICKETS_PER_ORDER = 6
 
@@ -12,6 +13,7 @@ class CheckoutRequest(BaseModel):
     fixture_id: int
     zone_id: int
     quantity: int = Field(ge=1, le=MAX_TICKETS_PER_ORDER)
+    jersey: JerseyRequest | None = None  # one optional jersey, picked up at this match
 
 
 class CheckoutResponse(BaseModel):

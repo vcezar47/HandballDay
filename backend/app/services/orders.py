@@ -8,12 +8,18 @@ from ..config import get_config
 from ..errors import ConflictError, NotFoundError, PaymentError
 from ..gateways import Line, PaymentGateway
 from ..models import (
-    FixtureStatus, Order, OrderStatus, Payment, PaymentStatus, Ticket, TicketStatus, User, Zone,
+    FixtureStatus, JerseyDesign, JerseyItem, Order, OrderStatus, Payment, PaymentStatus, Ticket, TicketStatus,
+    User, Zone,
 )
-from ..repositories import FixtureRepository, OrderRepository, PaymentRepository, TicketRepository
+from ..repositories import (
+    ClubRepository, FixtureRepository, JerseyRepository, JerseyTemplateRepository, OrderRepository,
+    PaymentRepository, TicketRepository, UploadRepository,
+)
 from ..schemas import CheckoutRequest, FixtureOut, TicketOut
 
 SESSION_LIFETIME = timedelta(minutes=31)  # Stripe accepts 30 minutes at the least
+# shortcut: one fixed price for every jersey; move it to the jersey templates or clubs when prices should differ.
+JERSEY_PRICE_BANI = 15000
 
 
 def _now() -> datetime:
@@ -30,6 +36,10 @@ class OrderService:
         self.orders = OrderRepository(db)
         self.payments = PaymentRepository(db)
         self.tickets = TicketRepository(db)
+        self.clubs = ClubRepository(db)
+        self.jerseys = JerseyRepository(db)
+        self.templates = JerseyTemplateRepository(db)
+        self.uploads = UploadRepository(db)
 
     def checkout(self, user: User, req: CheckoutRequest, now: datetime | None = None) -> str:
         """Hold the seats, start the payment, and return the URL to send the buyer to."""
@@ -39,6 +49,8 @@ class OrderService:
             raise NotFoundError("Fixture not found")
         if fixture.status != FixtureStatus.SCHEDULED or fixture.kickoff_at <= now:
             raise ConflictError("Tickets for this match are no longer on sale")
+
+        jersey_club = self._check_jersey(user, req)  # before the lock: do not hold seats while validating
 
         # The row lock makes "count the seats, then take them" one step: two buyers of the last seat queue up here.
         sale = self.fixtures.lock_zone(req.fixture_id, req.zone_id)
@@ -56,13 +68,23 @@ class OrderService:
             ))
         # Read everything needed after the commit now: commit expires the loaded objects.
         order_id, price, amount = order.id, sale.price_bani, sale.price_bani * req.quantity
-        label = f"{fixture.home_club.name} vs {fixture.away_club.name}, {self.db.get(Zone, req.zone_id).name}"
+        match = f"{fixture.home_club.name} vs {fixture.away_club.name}"
+        lines = [Line(f"{match}, {self.db.get(Zone, req.zone_id).name}", price, req.quantity)]
+        if req.jersey:
+            j = req.jersey
+            design = self.jerseys.add_design(JerseyDesign(
+                user_id=user.id, club_id=jersey_club.id, template_id=j.template_id, primary_color=j.primary_color.lower(),
+                secondary_color=j.secondary_color.lower(), name_text=j.name_text, number=j.number, logo_upload_id=j.logo_upload_id,
+            ))
+            self.jerseys.add(JerseyItem(order_id=order_id, design_id=design.id, fixture_id=req.fixture_id, size=j.size, price_bani=JERSEY_PRICE_BANI))
+            amount += JERSEY_PRICE_BANI
+            lines.append(Line(f"Jersey {jersey_club.name} #{j.number} {j.name_text}, size {j.size}, pickup at {match}", JERSEY_PRICE_BANI, 1))
         self.db.commit()  # releases the lock before the slow call to the payment provider
 
         public = get_config().public_url
         try:
             session = self.gateway.create_checkout(
-                order_id, [Line(label, price, req.quantity)],
+                order_id, lines,
                 success_url=f"{public}/tickets?paid=1", cancel_url=f"{public}/fixtures/{req.fixture_id}",
                 expires_at=now + SESSION_LIFETIME,
             )
@@ -74,6 +96,22 @@ class OrderService:
         self.db.commit()
         log_activity("checkout_started", user_id=user.id, order_id=order_id, amount_bani=amount)
         return session.url
+
+    def _check_jersey(self, user: User, req: CheckoutRequest):
+        """Look up what the jersey refers to; returns its club, or None when there is no jersey."""
+        j = req.jersey
+        if j is None:
+            return None
+        club = self.clubs.get_by_slug(j.club)
+        if club is None:
+            raise NotFoundError("Jersey club not found")
+        if self.templates.get(j.template_id) is None:
+            raise NotFoundError("Jersey template not found")
+        if j.logo_upload_id is not None:
+            upload = self.uploads.get(j.logo_upload_id)
+            if upload is None or upload.user_id != user.id:  # someone else's upload looks the same as a missing one
+                raise NotFoundError("Logo not found")
+        return club
 
     def _cancel(self, order_id: int) -> None:
         order = self.orders.get(order_id)

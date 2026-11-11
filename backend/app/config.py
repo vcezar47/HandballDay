@@ -24,6 +24,7 @@ class Config:
         self.port = int(os.getenv("PORT", "3000"))
         self.secret_key = os.getenv("SECRET_KEY", "dev-only-secret-change-me")
         self.log_dir = BACKEND_DIR / "logs"
+        self.upload_dir = BACKEND_DIR / "uploads"  # not served as static files: only through the owner-checked route
         # Absolute URL of the site, for sitemap.xml and robots.txt.
         self.public_url = os.getenv("PUBLIC_URL", "http://localhost:5173").rstrip("/")
         # Stripe test-mode keys (sk_test_..., whsec_...); empty means payments are not configured.
@@ -48,6 +49,7 @@ class TestConfig(Config):
         super().__init__()
         self.db_name = self.default_db_name
         self.log_dir = BACKEND_DIR / "logs" / "test"
+        self.upload_dir = BACKEND_DIR / "uploads" / "test"
         self.stripe_secret_key = self.stripe_webhook_secret = ""  # tests never reach the real Stripe
 
 

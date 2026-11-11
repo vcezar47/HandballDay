@@ -1,5 +1,5 @@
 // Stand-in for a crest (real crests stay out of the repo): club colours and the city's initials.
-function textColour(hex) {
+export function textColour(hex) {
   const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16))
   return 0.299 * r + 0.587 * g + 0.114 * b > 150 ? '#111' : '#fff'
 }

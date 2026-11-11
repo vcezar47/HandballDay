@@ -31,13 +31,13 @@ Legend: ⬜ not started · 🟡 partial · ✅ done
 | 2.03 | MVC / Repository | M0 | `models/`, `repositories/` (with `IRepository`), `services/`, `routers/` (controllers), React pages as views | ✅ |
 | 2.04 | Images, text, tables, links | M2 | Club pages, fixture tables, nav and footer links, club colours, logo and club badges (SVG; real crests stay out of the repo) | ✅ |
 | 3.01 | ≥3 classes | M0 | Models, repositories, services, errors, gateways | ✅ |
-| 3.02 | ≥1 interface | M3 | `IRepository`, `PaymentGateway` (Stripe and fake implementations), `FileValidator` | 🟡 |
+| 3.02 | ≥1 interface | M3 | `IRepository`, `PaymentGateway` (Stripe and fake implementations), `FileValidator` (`ImageValidator`) | ✅ |
 | 3.03 | Authentication | M1 | Email + argon2 hash, signed HttpOnly session cookie | ✅ |
 | 3.04 | Authorization | M1 | Roles fan / staff / admin, dependency `require_role(...)`, ownership checks on tickets, orders and designs, staff limited to their own club | ✅ |
 | 4.01 | Inheritance | M0 | Repositories extend a base, errors extend `AppError`, models extend mixins | ✅ |
 | 4.02 | ≥2 exception types | M1 | `AppError` family (validation, auth, forbidden, not found, conflict, payment) mapped to JSON by handlers | ✅ |
 | 4.03 | Image carousel | M2 | Home carousel of upcoming matches: autoplay, pause, arrows, dots, swipe, keyboard, reduced-motion aware | ✅ |
-| 4.04 | Animation | M2, M4 | Existing flow background, page transitions, jersey preview recolouring live | 🟡 |
+| 4.04 | Animation | M2, M4 | Existing flow background, page transitions, jersey preview recolouring live | ✅ |
 | 5.01 | ≥2 CSS files, ≥10 properties | M2 | Split `styles.css` into `variables`, `base`, `layout`, `components`, `pages`, `animations` | ✅ |
 | 5.02 | Responsive | M2 | Mobile-first, breakpoints near 600 and 1024 px, screenshots at 390 / 768 / 1440 px in `docs/screenshots/` | ✅ |
 | 6.01 | ≥5 unit tests | M1+ | pytest from M1 on, target 40+; a few Vitest tests for the jersey and carousel logic | 🟡 |
@@ -50,11 +50,11 @@ Legend: ⬜ not started · 🟡 partial · ✅ done
 | 9.01 | CSRF | M1 | Double-submit token middleware plus SameSite=Lax, tested | ✅ |
 | 9.02 | XSS | M2, M5 | React escaping only (no `dangerouslySetInnerHTML`), strict CSP, jersey text restricted to a safe character set, test with `<script>` payloads | 🟡 |
 | 9.03 | SQL injection | M1 | ORM only, bound parameters, Pydantic validation, test with `' OR 1=1 --` | ✅ |
-| 9.04 | Max 12 MB upload | M4 | Reject by `Content-Length` and again while streaming, so a lying header can't bypass it | ⬜ |
-| 9.05 | Allowed extensions | M4 | Whitelist png / jpg / jpeg / webp, checked on name and on real file content | ⬜ |
+| 9.04 | Max 12 MB upload | M4 | Reject by `Content-Length` and again while streaming, so a lying header can't bypass it | ✅ |
+| 9.05 | Allowed extensions | M4 | Whitelist png / jpg / jpeg / webp, checked on name and on real file content | ✅ |
 | 10.01 | Rate limiting | M5 | slowapi: strict on login, register and checkout, loose elsewhere | ⬜ |
 | 10.02 | CAPTCHA | M5 | Cloudflare Turnstile (free, has test keys) on register, login and jersey upload | ⬜ |
-| 10.03 | Steganography protection | M4 | Decode, strip metadata, resize and re-encode every upload to lossy WebP; original is discarded | ⬜ |
+| 10.03 | Steganography protection | M4 | Decode, strip metadata, resize and re-encode every upload to lossy WebP; original is discarded | ✅ |
 | 10.04 | Security headers grade A | M5, M6 | CSP, HSTS, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy; graded on the live site | ⬜ |
 | 10.05 | `.htaccess` | M6 | SPA fallback, `/api` proxy, compression, caching, headers, HTTPS redirect | ⬜ |
 
@@ -101,7 +101,7 @@ Done when: a guest can browse everything (UC1), and 2.04, 4.03, 5.01, 5.02 have 
 
 Done when: a test-card purchase yields a QR ticket, the same ticket scans once and is rejected the second time, 3.02 and 8.02 have proof.
 
-### M4: Jersey studio and uploads (L)
+### M4: Jersey studio and uploads (L) ✅ built; starting from a real player's name is not done
 - Jersey templates as SVG with CSS variables; live preview as the fan changes colours, name and number.
 - Name and number validated to a safe character set and length.
 - Upload pipeline: 12 MB cap, extension whitelist, content check with Pillow, then decode and re-encode to lossy WebP with metadata stripped (10.03). Random stored filenames, stored under `backend/uploads/` and served through a route, never executed.

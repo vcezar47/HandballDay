@@ -9,16 +9,18 @@ async function loadCsrf() {
 
 async function request(method, path, body, retried = false) {
   const write = method !== 'GET'
+  const raw = body instanceof Blob // a file goes up as the raw body; everything else is JSON
   let res
   try {
     if (write && !csrfToken) await loadCsrf()
     res = await fetch(`/api${path}`, {
       method,
       headers: {
-        ...(body && { 'Content-Type': 'application/json' }),
+        ...(raw && { 'Content-Type': 'application/octet-stream', 'X-Filename': encodeURIComponent(body.name) }),
+        ...(body && !raw && { 'Content-Type': 'application/json' }),
         ...(write && { 'X-CSRF-Token': csrfToken }),
       },
-      body: body && JSON.stringify(body),
+      body: body && (raw ? body : JSON.stringify(body)),
     })
   } catch {
     throw new Error('Cannot reach the server. Is the backend running?')
@@ -43,8 +45,11 @@ export const login = (email, password) => request('POST', '/auth/login', { email
 export const logout = () => request('POST', '/auth/logout')
 export const me = () => request('GET', '/auth/me')
 
-export const checkout = (fixtureId, zoneId, quantity) =>
-  request('POST', '/checkout', { fixture_id: fixtureId, zone_id: zoneId, quantity })
+export const checkout = (fixtureId, zoneId, quantity, jersey) =>
+  request('POST', '/checkout', { fixture_id: fixtureId, zone_id: zoneId, quantity, jersey })
+export const getJerseyCatalog = () => request('GET', '/jersey-templates')
+export const getJerseys = () => request('GET', '/jerseys')
+export const uploadLogo = (file) => request('POST', '/uploads', file)
 export const getTickets = () => request('GET', '/tickets')
 
 export const getStaffFixtures = () => request('GET', '/staff/fixtures')

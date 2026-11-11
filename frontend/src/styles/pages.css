@@ -424,3 +424,78 @@ legend {
   margin-top: 16px;
   font-size: 1rem;
 }
+
+/* ---- jersey studio ---- */
+
+.check {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+}
+
+.check input {
+  width: auto;
+}
+
+.studio {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+.studio-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.colour-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+input[type='color'] {
+  height: 42px;
+  padding: 4px;
+  cursor: pointer;
+}
+
+.jersey-preview {
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgb(255 255 255 / 0.04);
+}
+
+.jersey {
+  width: min(100%, 230px);
+  height: auto;
+  filter: drop-shadow(0 8px 14px rgb(0 0 0 / 0.45));
+}
+
+.jersey-thumb {
+  width: 130px;
+}
+
+.j-primary {
+  fill: var(--primary);
+  transition: fill 0.4s;
+}
+
+.j-secondary {
+  fill: var(--secondary);
+  transition: fill 0.4s;
+}
+
+@media (min-width: 600px) {
+  .buy {
+    max-width: 720px;
+  }
+  .studio {
+    grid-template-columns: 240px minmax(0, 1fr);
+    align-items: start;
+  }
+}

@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { checkout, getFixture } from './api.js'
 import ClubBadge from './ClubBadge.jsx'
+import JerseyStudio from './JerseyStudio.jsx'
 import { formatDate, formatPrice, formatTime } from './format.js'
 import Seo from './Seo.jsx'
 import Status from './Status.jsx'
@@ -84,8 +85,16 @@ function BuyForm({ fixture }) {
   const [quantity, setQuantity] = useState(1)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  const [wantJersey, setWantJersey] = useState(false)
+  const [jersey, setJersey] = useState(null) // payload from the studio, null while incomplete
+  const [jerseyPrice, setJerseyPrice] = useState(0)
+  // stable identity: the studio calls it from an effect
+  const handleJersey = useCallback((body, price) => {
+    setJersey(body)
+    setJerseyPrice(price)
+  }, [])
 
-  const zone = available.find((z) => z.zone_id === Number(zoneId))
+  const zone =available.find((z) => z.zone_id === Number(zoneId))
   if (!zone) return <p className="muted">Sold out.</p>
   const most = Math.min(MAX_PER_ORDER, zone.seats_left)
 
@@ -94,7 +103,7 @@ function BuyForm({ fixture }) {
     setError('')
     setBusy(true)
     try {
-      const { checkout_url } = await checkout(fixture.id, zone.zone_id, Math.min(quantity, most))
+      const { checkout_url } = await checkout(fixture.id, zone.zone_id, Math.min(quantity, most), wantJersey ? jersey : undefined)
       window.location.assign(checkout_url) // Stripe's hosted page; it sends the buyer back to /tickets
     } catch (err) {
       setError(err.message)
@@ -122,11 +131,16 @@ function BuyForm({ fixture }) {
           ))}
         </select>
       </label>
+      <label className="check">
+        <input type="checkbox" checked={wantJersey} onChange={(e) => setWantJersey(e.target.checked)} />
+        Add a custom jersey, picked up at this match
+      </label>
+      {wantJersey && <JerseyStudio homeSlug={fixture.home.slug} onChange={handleJersey} />}
       <p className="total">
-        Total <strong>{formatPrice(zone.price_bani * Math.min(quantity, most))}</strong>
+        Total <strong>{formatPrice(zone.price_bani * Math.min(quantity, most) + (wantJersey ? jerseyPrice : 0))}</strong>
       </p>
       {error && <p className="message error" role="alert">{error}</p>}
-      <button type="submit" className="primary" disabled={busy}>
+      <button type="submit" className="primary" disabled={busy || (wantJersey && !jersey)}>
         {busy ? 'Opening payment...' : 'Pay with card'}
       </button>
       <p className="muted small">Test mode: use card 4242 4242 4242 4242, any future date and any CVC.</p>

@@ -72,6 +72,8 @@ Without keys the API runs, but checkout answers "Payments are not configured". T
 
 Without `stripe listen` running the order stays pending: seats are held for 35 minutes and then released.
 
+A jersey can be added to a ticket purchase (150 RON, picked up at the match): the buyer designs it with a live preview and may upload a logo. Uploads go through `POST /api/uploads` as a raw body (12 MB cap, PNG/JPG/WebP only), are decoded and re-encoded as a small WebP under a random name in `backend/uploads/`, and are served only to their owner.
+
 Staff (see roles above) manage their club's fixtures under "Staff" and check tickets on "Scan tickets" by typing or scanning the code.
 
 ## Tests

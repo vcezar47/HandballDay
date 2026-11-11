@@ -43,6 +43,7 @@ erDiagram
 - **A ticket's zone must be on sale**: `tickets (fixture_id, zone_id)` is a composite foreign key to `fixture_zones`, so the database refuses a ticket for a zone that was never put on sale for that fixture.
 - **Not enforced by the database** (checked in services instead): a fixture's zones belong to the fixture's venue, and `users.club_id` is set only for staff.
 - **Seats are held by pending tickets**: checkout inserts the order's tickets as `pending` inside the same transaction that counts the seats (the `fixture_zones` row is locked `FOR UPDATE`), so two buyers cannot take the last seat. A pending ticket counts as taken for 35 minutes after its order was created; after that the hold is ignored, so abandoned checkouts free their seats without a cleanup job. Payment turns the tickets `valid`; an expired or failed payment turns them `cancelled`.
+- **Jerseys are created at checkout**: a `jersey_designs` row and its `jersey_items` line are inserted in the same transaction as the order's tickets, so there are no unsold or draft designs. `jersey_items.price_bani` is a snapshot like the ticket price, and `jersey_items.fixture_id` is the pickup match (decision D2).
 - **Enums** (`fixtures.status`, `orders.status`, `payments.status`, `tickets.status`) are stored as text with the allowed values defined in the model enums.
 - **Activity log** is a file, not a table (barem 7.01).
 - **Players** are left out until M2 (optional roster).

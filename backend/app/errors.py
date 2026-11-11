@@ -38,6 +38,11 @@ class ConflictError(AppError):
     code = "conflict"
 
 
+class PayloadTooLargeError(AppError):
+    status_code = 413
+    code = "too_large"
+
+
 class PaymentError(AppError):
     status_code = 402
     code = "payment_failed"

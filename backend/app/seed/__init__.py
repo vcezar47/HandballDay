@@ -12,11 +12,13 @@ from pathlib import Path
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from ..models import Club, Fixture, FixtureZone, League, Role, Venue, Zone
+from ..models import Club, Fixture, FixtureZone, JerseyTemplate, League, Role, Venue, Zone
 from ..repositories import ClubRepository
 
 CLUBS_FILE = Path(__file__).with_name("clubs.json")
 ROLES = ("fan", "staff", "admin")
+# (name, svg_key): the key picks the drawing in frontend/src/Jersey.jsx
+TEMPLATES = (("Classic", "classic"), ("Stripes", "stripes"), ("Sash", "sash"))
 # (zone name, share of the venue capacity in %, price in bani); the last zone takes the remainder.
 ZONES = (("VIP", 20, 8000), ("Main stand", 50, 4500), ("End stand", 30, 2500))
 
@@ -90,7 +92,14 @@ def seed_fixtures(db: Session, now: datetime | None = None) -> None:
     db.commit()
 
 
+def seed_templates(db: Session) -> None:
+    have = set(db.scalars(select(JerseyTemplate.name)))
+    db.add_all(JerseyTemplate(name=n, svg_key=k) for n, k in TEMPLATES if n not in have)
+    db.commit()
+
+
 def seed_all(db: Session) -> None:
     ensure_roles(db)
+    seed_templates(db)
     seed_clubs(db)
     seed_fixtures(db)
