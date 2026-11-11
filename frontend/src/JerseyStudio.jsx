@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { getClubs, getJerseyCatalog, uploadLogo } from './api.js'
+import { getClubs, getConfig, getJerseyCatalog, uploadLogo } from './api.js'
 import Jersey from './Jersey.jsx'
 import Status from './Status.jsx'
+import Turnstile from './Turnstile.jsx'
 import useFetch from './useFetch.js'
 
 const MAX_BYTES = 12 * 1024 * 1024 // same limits as the server, checked here only to save a round trip
@@ -21,6 +22,13 @@ export default function JerseyStudio({ homeSlug, onChange }) {
   const [logo, setLogo] = useState(null) // { id, preview }
   const [logoError, setLogoError] = useState('')
   const [uploading, setUploading] = useState(false)
+  const [siteKey, setSiteKey] = useState('')
+  const [captcha, setCaptcha] = useState('')
+  const [captchaRound, setCaptchaRound] = useState(0)
+
+  useEffect(() => {
+    getConfig().then((c) => setSiteKey(c.turnstile_site_key))
+  }, [])
 
   const clubRow = clubs?.find((c) => c.slug === club)
   const primary = colours?.primary ?? clubRow?.primary_color ?? '#014698'
@@ -56,14 +64,17 @@ export default function JerseyStudio({ homeSlug, onChange }) {
     setLogoError('')
     if (!ALLOWED.test(file.name)) return setLogoError('Use a PNG, JPG or WebP image')
     if (file.size > MAX_BYTES) return setLogoError('The file is larger than 12 MB')
+    if (siteKey && !captcha) return setLogoError('Please complete the check below first, then choose the file again')
     setUploading(true)
     try {
-      const { id } = await uploadLogo(file)
+      const { id } = await uploadLogo(file, captcha)
       setLogo({ id, preview: URL.createObjectURL(file) })
     } catch (err) {
       setLogoError(err.message)
     } finally {
       setUploading(false)
+      setCaptcha('') // single-use: ask for a new one next time
+      setCaptchaRound((n) => n + 1)
     }
   }
 
@@ -149,6 +160,7 @@ export default function JerseyStudio({ homeSlug, onChange }) {
           Logo (optional)
           <input type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" onChange={handleFile} disabled={uploading} />
         </label>
+        {siteKey && <Turnstile key={captchaRound} siteKey={siteKey} onToken={setCaptcha} />}
         {uploading && <p className="muted small">Uploading...</p>}
         {logo && (
           <button type="button" className="link-btn" onClick={() => setLogo(null)}>

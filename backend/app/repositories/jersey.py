@@ -1,11 +1,21 @@
-from sqlalchemy import select
+from sqlalchemy import exists, select, update
 
-from ..models import Club, Fixture, JerseyDesign, JerseyItem, JerseyTemplate, Order, OrderStatus, Upload
+from ..models import Club, Fixture, JerseyDesign, JerseyItem, JerseyTemplate, Order, OrderStatus, Upload, User
 from .base import SqlRepository
 
 
 class UploadRepository(SqlRepository[Upload]):
     model = Upload
+
+    def list_with_owner(self) -> list[tuple[Upload, str, bool]]:
+        """Newest first, with the owner's email and whether a jersey design still uses the file."""
+        used = exists().where(JerseyDesign.logo_upload_id == Upload.id)
+        q = select(Upload, User.email, used).join(User, User.id == Upload.user_id).order_by(Upload.id.desc())
+        return [tuple(row) for row in self.db.execute(q)]
+
+    def detach(self, upload_id: int) -> None:
+        """Designs that used this logo stay, without a logo."""
+        self.db.execute(update(JerseyDesign).where(JerseyDesign.logo_upload_id == upload_id).values(logo_upload_id=None))
 
 
 class JerseyTemplateRepository(SqlRepository[JerseyTemplate]):

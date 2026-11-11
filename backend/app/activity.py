@@ -30,3 +30,24 @@ def _logger() -> logging.Logger:
 
 def log_activity(event: str, **fields) -> None:
     _logger().info("%s %s", event, json.dumps(fields, ensure_ascii=False, default=str))
+
+
+def read_activity(limit: int = 200, event: str | None = None) -> list[dict]:
+    """The newest entries of the current log file, newest first, optionally of one event type."""
+    path = get_config().log_dir / "activity.log"
+    if not path.is_file():
+        return []
+    entries = []
+    with path.open(encoding="utf-8") as f:
+        for line in f:
+            when, _, rest = line.rstrip().partition(" ")
+            clock, _, rest = rest.partition(" ")
+            name, _, payload = rest.partition(" ")
+            if event and name != event:
+                continue
+            try:
+                fields = json.loads(payload)
+            except ValueError:  # a line from something else in the file: show it rather than hide it
+                fields = {"raw": payload}
+            entries.append({"time": f"{when} {clock}", "event": name, "fields": fields})
+    return entries[-limit:][::-1]

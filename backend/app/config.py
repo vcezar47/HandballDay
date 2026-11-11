@@ -30,9 +30,13 @@ class Config:
         # Stripe test-mode keys (sk_test_..., whsec_...); empty means payments are not configured.
         self.stripe_secret_key = os.getenv("STRIPE_SECRET_KEY", "")
         self.stripe_webhook_secret = os.getenv("STRIPE_WEBHOOK_SECRET", "")
+        # Cloudflare Turnstile. No secret means no CAPTCHA (handy locally); prod requires both keys.
+        self.turnstile_site_key = os.getenv("TURNSTILE_SITE_KEY", "")
+        self.turnstile_secret_key = os.getenv("TURNSTILE_SECRET_KEY", "")
 
     # Cookies only travel over HTTPS in production.
     secure_cookies = False
+    rate_limit = True
     session_max_age = 14 * 24 * 3600
 
 
@@ -42,6 +46,7 @@ class DevConfig(Config):
 
 class TestConfig(Config):
     name = "test"
+    rate_limit = False  # one client address for every test; the rate-limit tests switch it on themselves
     # Fixed on purpose: tests drop and recreate every table, never point them at real data.
     default_db_name = "handballday_test"
 
@@ -51,6 +56,7 @@ class TestConfig(Config):
         self.log_dir = BACKEND_DIR / "logs" / "test"
         self.upload_dir = BACKEND_DIR / "uploads" / "test"
         self.stripe_secret_key = self.stripe_webhook_secret = ""  # tests never reach the real Stripe
+        self.turnstile_site_key = self.turnstile_secret_key = ""
 
 
 class ProdConfig(Config):
@@ -60,7 +66,7 @@ class ProdConfig(Config):
 
     def __init__(self) -> None:
         super().__init__()
-        for var in ("DB_PASSWORD", "SECRET_KEY", "STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"):
+        for var in ("DB_PASSWORD", "SECRET_KEY", "STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET", "TURNSTILE_SITE_KEY", "TURNSTILE_SECRET_KEY"):
             if not os.getenv(var):
                 raise RuntimeError(f"{var} must be set when APP_ENV=prod")
 

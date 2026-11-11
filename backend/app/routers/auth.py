@@ -4,9 +4,11 @@ from sqlalchemy.orm import Session
 from ..activity import log_activity
 from ..db import get_db
 from ..errors import AuthError
+from ..limits import STRICT, limiter
 from ..models import User
 from ..schemas import AuthResponse, Login, Register, UserOut
 from ..security.access import SESSION_KEY, current_user
+from ..security.captcha import CaptchaVerifier, get_captcha
 from ..services import AuthService
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
@@ -22,7 +24,9 @@ def _start_session(request: Request, user: User) -> None:
 
 
 @router.post("/register", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
-def register(payload: Register, request: Request, db: Session = Depends(get_db)):
+@limiter.limit(STRICT)
+def register(payload: Register, request: Request, db: Session = Depends(get_db), captcha: CaptchaVerifier = Depends(get_captcha)):
+    captcha.check(payload.captcha_token, _ip(request))
     user = AuthService(db).register(payload.email, payload.display_name, payload.password)
     _start_session(request, user)
     log_activity("register", user_id=user.id, ip=_ip(request))
@@ -30,7 +34,9 @@ def register(payload: Register, request: Request, db: Session = Depends(get_db))
 
 
 @router.post("/login", response_model=AuthResponse)
-def login(payload: Login, request: Request, db: Session = Depends(get_db)):
+@limiter.limit(STRICT)
+def login(payload: Login, request: Request, db: Session = Depends(get_db), captcha: CaptchaVerifier = Depends(get_captcha)):
+    captcha.check(payload.captcha_token, _ip(request))
     try:
         user = AuthService(db).authenticate(payload.email, payload.password)
     except AuthError:

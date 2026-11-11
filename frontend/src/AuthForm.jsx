@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { login, register } from './api.js'
+import { getConfig, login, register } from './api.js'
 import PasswordInput from './PasswordInput.jsx'
+import Turnstile from './Turnstile.jsx'
 
 export default function AuthForm({ onLogin }) {
   const [mode, setMode] = useState('login') // 'login' | 'signup'
@@ -10,6 +11,13 @@ export default function AuthForm({ onLogin }) {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [siteKey, setSiteKey] = useState('') // empty: no CAPTCHA on this server
+  const [captcha, setCaptcha] = useState('')
+  const [captchaRound, setCaptchaRound] = useState(0) // a token works once, so each attempt needs a fresh widget
+
+  useEffect(() => {
+    getConfig().then((c) => setSiteKey(c.turnstile_site_key))
+  }, [])
 
   const isLogin = mode === 'login'
 
@@ -23,10 +31,12 @@ export default function AuthForm({ onLogin }) {
     setError('')
     setLoading(true)
     try {
-      const { user } = isLogin ? await login(email, password) : await register(email, displayName, password)
+      const { user } = isLogin ? await login(email, password, captcha) : await register(email, displayName, password, captcha)
       onLogin(user)
     } catch (err) {
       setError(err.message)
+      setCaptcha('')
+      setCaptchaRound((n) => n + 1)
     } finally {
       setLoading(false)
     }
@@ -101,9 +111,11 @@ export default function AuthForm({ onLogin }) {
           />
         </label>
 
+        {siteKey && <Turnstile key={captchaRound} siteKey={siteKey} onToken={setCaptcha} />}
+
         {error && <p className="message error">{error}</p>}
 
-        <button type="submit" className="primary" disabled={loading}>
+        <button type="submit" className="primary" disabled={loading || (siteKey && !captcha)}>
           {loading ? 'Please wait...' : isLogin ? 'Log in' : 'Sign up'}
         </button>
       </form>

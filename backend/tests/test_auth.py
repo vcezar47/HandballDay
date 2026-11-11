@@ -82,7 +82,8 @@ def test_sql_injection_in_login_is_just_a_wrong_password(client):
 
 
 def test_sql_injection_in_text_field_is_stored_as_plain_text(client, db):
-    name = "Robert'); DROP TABLE users;--"
+    assert register(client, display_name="Robert'); DROP TABLE users;--").status_code == 422  # punctuation is refused outright
+    name = "O'Brien' OR 'a'-'a"  # SQL-shaped but within the allowed characters: it must still be only data
     register(client, display_name=name)
     assert client.get("/api/auth/me").json()["display_name"] == name  # table still there, value untouched
     assert db.scalar(select(User.display_name)) == name

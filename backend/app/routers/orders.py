@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 
 from ..db import get_db
+from ..limits import STRICT, limiter
 from ..gateways import PaymentGateway, get_gateway
 from ..models import User
 from ..schemas import CheckoutRequest, CheckoutResponse, TicketOut
@@ -12,8 +13,9 @@ router = APIRouter(prefix="/api", tags=["orders"])
 
 
 @router.post("/checkout", response_model=CheckoutResponse)
+@limiter.limit(STRICT)
 def checkout(
-    payload: CheckoutRequest, user: User = Depends(current_user), db: Session = Depends(get_db),
+    request: Request, payload: CheckoutRequest, user: User = Depends(current_user), db: Session = Depends(get_db),
     gateway: PaymentGateway = Depends(get_gateway),
 ):
     return {"checkout_url": OrderService(db, gateway).checkout(user, payload)}

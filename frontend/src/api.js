@@ -7,7 +7,7 @@ async function loadCsrf() {
   csrfToken = (await res.json()).csrf_token
 }
 
-async function request(method, path, body, retried = false) {
+async function request(method, path, body, headers = {}, retried = false) {
   const write = method !== 'GET'
   const raw = body instanceof Blob // a file goes up as the raw body; everything else is JSON
   let res
@@ -19,6 +19,7 @@ async function request(method, path, body, retried = false) {
         ...(raw && { 'Content-Type': 'application/octet-stream', 'X-Filename': encodeURIComponent(body.name) }),
         ...(body && !raw && { 'Content-Type': 'application/json' }),
         ...(write && { 'X-CSRF-Token': csrfToken }),
+        ...headers,
       },
       body: body && (raw ? body : JSON.stringify(body)),
     })
@@ -29,7 +30,7 @@ async function request(method, path, body, retried = false) {
   const data = await res.json().catch(() => ({}))
   if (res.status === 403 && data.code === 'csrf_failed' && !retried) {
     csrfToken = null // cookie expired or was cleared: get a fresh token and try once more
-    return request(method, path, body, true)
+    return request(method, path, body, headers, true)
   }
   if (!res.ok) {
     // FastAPI sends a string for HTTP errors and a list for validation errors.
@@ -39,9 +40,10 @@ async function request(method, path, body, retried = false) {
   return data
 }
 
-export const register = (email, displayName, password) =>
-  request('POST', '/auth/register', { email, display_name: displayName, password })
-export const login = (email, password) => request('POST', '/auth/login', { email, password })
+export const register = (email, displayName, password, captchaToken) =>
+  request('POST', '/auth/register', { email, display_name: displayName, password, captcha_token: captchaToken })
+export const login = (email, password, captchaToken) =>
+  request('POST', '/auth/login', { email, password, captcha_token: captchaToken })
 export const logout = () => request('POST', '/auth/logout')
 export const me = () => request('GET', '/auth/me')
 
@@ -49,7 +51,23 @@ export const checkout = (fixtureId, zoneId, quantity, jersey) =>
   request('POST', '/checkout', { fixture_id: fixtureId, zone_id: zoneId, quantity, jersey })
 export const getJerseyCatalog = () => request('GET', '/jersey-templates')
 export const getJerseys = () => request('GET', '/jerseys')
-export const uploadLogo = (file) => request('POST', '/uploads', file)
+export const uploadLogo = (file, captchaToken) =>
+  request('POST', '/uploads', file, captchaToken ? { 'X-Captcha-Token': captchaToken } : {})
+
+// The Turnstile site key (empty = no CAPTCHA). Asked once; a failure means "off", and is asked again next time.
+let configPromise
+export const getConfig = () =>
+  (configPromise ??= request('GET', '/config').catch(() => {
+    configPromise = undefined
+    return { turnstile_site_key: '' }
+  }))
+
+export const getAdminUsers = () => request('GET', '/admin/users')
+export const setUserRole = (id, role, club) => request('PATCH', `/admin/users/${id}`, { role, club })
+export const updateClub = (slug, body) => request('PATCH', `/admin/clubs/${encodeURIComponent(slug)}`, body)
+export const getAdminUploads = () => request('GET', '/admin/uploads')
+export const deleteUpload = (id) => request('DELETE', `/admin/uploads/${id}`)
+export const getActivity = (event) => request('GET', `/admin/activity?limit=200${event ? `&event=${encodeURIComponent(event)}` : ''}`)
 export const getTickets = () => request('GET', '/tickets')
 
 export const getStaffFixtures = () => request('GET', '/staff/fixtures')

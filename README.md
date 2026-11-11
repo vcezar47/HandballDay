@@ -76,6 +76,13 @@ A jersey can be added to a ticket purchase (150 RON, picked up at the match): th
 
 Staff (see roles above) manage their club's fixtures under "Staff" and check tickets on "Scan tickets" by typing or scanning the code.
 
+## Security setup
+
+- **Rate limits** (slowapi): 10 requests a minute per address on login, register and checkout, 20 on uploads, 300 on everything else; the counters are in memory, so they reset when the backend restarts.
+- **CAPTCHA** (Cloudflare Turnstile) on register, login and logo upload. `backend/.env.example` holds Cloudflare's public test keys, which always pass; leave both keys empty to switch the CAPTCHA off, and use real keys in production.
+- **Headers**: the API sends `nosniff`, `X-Frame-Options`, a strict CSP, `Referrer-Policy` and `Permissions-Policy` (plus HSTS in production). The app's own policy (`SPA_CSP` in `backend/app/security/headers.py`) is applied by the web server; to see it locally run `npm run build && npm run preview` (http://localhost:4173) instead of `npm run dev`.
+- **Admin** (role `admin`, see "Accounts and roles"): the Admin page manages roles, club details, uploads and the activity log.
+
 ## Tests
 
 ```bash

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router'
 import { logout, me } from './api.js'
+import Admin from './Admin.jsx'
 import AuthForm from './AuthForm.jsx'
 import ClubPage from './ClubPage.jsx'
 import Clubs from './Clubs.jsx'
@@ -51,6 +52,7 @@ export default function App() {
               <Route path="/fixtures" element={<Fixtures />} />
               <Route path="/fixtures/:id" element={<FixtureDetail user={user} />} />
               <Route path="/tickets" element={<RequireRole user={user}><Tickets /></RequireRole>} />
+              <Route path="/admin" element={<RequireRole user={user} roles={['admin']}><Admin /></RequireRole>} />
               <Route path="/staff" element={<RequireRole user={user} roles={['staff']}><StaffFixtures /></RequireRole>} />
               <Route path="/staff/fixtures/new" element={<RequireRole user={user} roles={['staff']}><StaffFixtureForm /></RequireRole>} />
               <Route path="/staff/fixtures/:id" element={<RequireRole user={user} roles={['staff']}><StaffFixtureForm /></RequireRole>} />

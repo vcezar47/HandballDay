@@ -43,19 +43,19 @@ Legend: ⬜ not started · 🟡 partial · ✅ done
 | 6.01 | ≥5 unit tests | M1+ | pytest from M1 on, target 40+; a few Vitest tests for the jersey and carousel logic | 🟡 |
 | 6.02 | Git | M0 | This repo; small commits per task | 🟡 |
 | 6.03 | GitHub Actions CI | M0 | Backend tests against a Postgres service container, frontend lint and build | 🟡 |
-| 7.01 | Activity log file | M1, M3, M5 | `backend/logs/activity.log`, rotating; register, login, failures, orders, scans, admin actions; viewer in admin panel | 🟡 |
+| 7.01 | Activity log file | M1, M3, M5 | `backend/logs/activity.log`, rotating; register, login, failures, orders, scans, admin actions; viewer in admin panel | ✅ |
 | 7.02 | Hosting | M6 | Apache VPS or equivalent, see decision D3 | ⬜ |
 | 8.01 | Lighthouse SEO ≥90 | M2, M6 | Per-page title, meta description, canonical, `robots.txt`, `sitemap.xml`, alt text, crawlable links; measured on the deployed site | 🟡 |
 | 8.02 | Stripe payments | M3 | Hosted Checkout Session in test mode, webhook with signature check, idempotent fulfilment; a test-card purchase was run end to end | ✅ |
 | 9.01 | CSRF | M1 | Double-submit token middleware plus SameSite=Lax, tested | ✅ |
-| 9.02 | XSS | M2, M5 | React escaping only (no `dangerouslySetInnerHTML`), strict CSP, jersey text restricted to a safe character set, test with `<script>` payloads | 🟡 |
+| 9.02 | XSS | M2, M5 | React escaping only (no `dangerouslySetInnerHTML`), strict CSP, jersey text restricted to a safe character set, test with `<script>` payloads; display names and jersey text use a safe character set; a test scans the frontend for HTML-injection APIs | ✅ |
 | 9.03 | SQL injection | M1 | ORM only, bound parameters, Pydantic validation, test with `' OR 1=1 --` | ✅ |
 | 9.04 | Max 12 MB upload | M4 | Reject by `Content-Length` and again while streaming, so a lying header can't bypass it | ✅ |
 | 9.05 | Allowed extensions | M4 | Whitelist png / jpg / jpeg / webp, checked on name and on real file content | ✅ |
-| 10.01 | Rate limiting | M5 | slowapi: strict on login, register and checkout, loose elsewhere | ⬜ |
-| 10.02 | CAPTCHA | M5 | Cloudflare Turnstile (free, has test keys) on register, login and jersey upload | ⬜ |
+| 10.01 | Rate limiting | M5 | slowapi: 10 per minute on login, register and checkout, 20 on uploads, 300 elsewhere; 429 with `Retry-After` | ✅ |
+| 10.02 | CAPTCHA | M5 | Cloudflare Turnstile (free, has test keys) on register, login and jersey upload; verified server-side, fails closed | ✅ |
 | 10.03 | Steganography protection | M4 | Decode, strip metadata, resize and re-encode every upload to lossy WebP; original is discarded | ✅ |
-| 10.04 | Security headers grade A | M5, M6 | CSP, HSTS, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy; graded on the live site | ⬜ |
+| 10.04 | Security headers grade A | M5, M6 | CSP, HSTS, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy; graded on the live site; API policy and SPA policy are in place, the grade is measured in M6 | 🟡 |
 | 10.05 | `.htaccess` | M6 | SPA fallback, `/api` proxy, compression, caching, headers, HTTPS redirect | ⬜ |
 
 ## 3. Milestones
@@ -111,7 +111,7 @@ Done when: a test-card purchase yields a QR ticket, the same ticket scans once a
 
 Done when: a fan buys a ticket plus a jersey in one payment, and 4.04, 9.04, 9.05, 10.03 have tests (oversize file, `.exe` renamed to `.png`, file with a payload appended).
 
-### M5: Hardening and admin (M)
+### M5: Hardening and admin (M) ✅ built; admins cannot yet create or edit fixtures for a club, and the headers are only graded in M6
 - slowapi rate limits with 429 responses and a test.
 - Turnstile on register, login and upload (test keys locally).
 - Security headers middleware, tuned so Stripe redirect and the SPA still work.

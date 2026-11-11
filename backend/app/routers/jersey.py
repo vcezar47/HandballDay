@@ -1,13 +1,16 @@
 from fastapi import APIRouter, Depends, Request, status
+from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from urllib.parse import unquote
 
 from ..db import get_db
 from ..errors import PayloadTooLargeError
+from ..limits import UPLOAD, limiter
 from ..models import User
 from ..schemas import JerseyOut, TemplatesOut, UploadOut
 from ..security.access import current_user
+from ..security.captcha import CaptchaVerifier, get_captcha
 from ..services import JerseyService, UploadService
 from ..services.uploads import MAX_UPLOAD_BYTES
 
@@ -26,8 +29,14 @@ def my_jerseys(user: User = Depends(current_user), db: Session = Depends(get_db)
 
 
 @router.post("/uploads", response_model=UploadOut, status_code=status.HTTP_201_CREATED)
-async def upload(request: Request, user: User = Depends(current_user), db: Session = Depends(get_db)):
+@limiter.limit(UPLOAD)
+async def upload(
+    request: Request, user: User = Depends(current_user), db: Session = Depends(get_db),
+    captcha: CaptchaVerifier = Depends(get_captcha),
+):
     """The file is the raw request body (the name travels in X-Filename), so it can be counted as it arrives."""
+    # Before reading the body: a bot should not get to push 12 MB at us. The check calls Cloudflare, so it runs in a thread.
+    await run_in_threadpool(captcha.check, request.headers.get("x-captcha-token"), request.client.host if request.client else None)
     declared = request.headers.get("content-length", "")
     if declared.isdigit() and int(declared) > MAX_UPLOAD_BYTES:
         raise PayloadTooLargeError(TOO_LARGE)  # cheap early refusal; the header may lie, so the loop checks too
