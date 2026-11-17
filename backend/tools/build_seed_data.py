@@ -24,6 +24,8 @@ LOGO_KEY = {
     "gloria_bistrita": "bistrita", "ramnicu_valcea": "valcea", "rapid_bucuresti": "rapidbucuresti",
     "slatina": "slatina", "targu_jiu": "targujiu", "zalau": "zalau",
 }
+# shorter display names; the slug is still built from the source name, so URLs and crest files keep working
+SHORT_NAME = {"SCM Universitatea Craiova": "SCM Craiova"}
 COLOUR = re.compile(r'\["Romania/(\w+)\.png"\]\s*=\s*\("(#\w{6})",\s*"(#\w{6})"\)')
 
 
@@ -48,7 +50,7 @@ def main() -> None:
         d = json.loads(path.read_text(encoding="utf-8"))
         primary, secondary = kits[LOGO_KEY[path.stem]]
         clubs.append({
-            "name": d["Name"],
+            "name": SHORT_NAME.get(d["Name"], d["Name"]),
             "slug": slugify(d["Name"]),
             "city": d["City"],
             "founded_year": d["FoundedYear"],

@@ -344,8 +344,8 @@
 }
 
 .ticket-teams .badge {
-  width: 46px;
-  height: 46px;
+  width: 56px;
+  height: 56px;
 }
 
 .ticket-teams .team-line {
@@ -497,6 +497,12 @@
 
 .badge {
   flex: none;
+}
+
+.crest {
+  border-radius: 50%;
+  background: #fff;
+  object-fit: contain;
 }
 
 /* ---- tables ---- */

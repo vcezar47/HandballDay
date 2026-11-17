@@ -8,7 +8,7 @@ export default function ClubBlocks({ clubs }) {
       {clubs.map((c) => (
         <li key={c.slug}>
           <Link to={`/clubs/${c.slug}`} style={{ '--c': c.primary_color, '--t': textColour(c.primary_color) }}>
-            <ClubBadge club={c} size={44} />
+            <ClubBadge club={c} size={64} />
             {c.name}
           </Link>
         </li>

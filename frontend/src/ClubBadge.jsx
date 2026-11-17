@@ -1,10 +1,29 @@
-// Stand-in for a crest (real crests stay out of the repo): club colours and the city's initials.
+import { useState } from 'react'
+
 export function textColour(hex) {
   const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16))
   return 0.299 * r + 0.587 * g + 0.114 * b > 150 ? '#111' : '#fff'
 }
 
+// The club's crest (public/crests/<slug>.webp) on a white disc, so every crest reads on any colour.
+// If the image is missing, falls back to club colours and the city's initials.
 export default function ClubBadge({ club, size = 40 }) {
+  const [broken, setBroken] = useState(false)
+
+  if (!broken && club.slug) {
+    return (
+      <img
+        className="badge crest"
+        src={`/crests/${club.slug}.webp`}
+        width={size}
+        height={size}
+        style={{ padding: Math.round(size * 0.14) }} // percentages would resolve against the parent, not the image
+        alt={`${club.name} badge`}
+        onError={() => setBroken(true)}
+      />
+    )
+  }
+
   const initials = club.city
     .split(/[\s-]+/)
     .map((w) => w[0])

@@ -29,7 +29,7 @@ Legend: ⬜ not started · 🟡 partial · ✅ done
 | 2.01 | DB in 3NF | M0 | Schema in section 4, written up in `docs/DATABASE.md` with an ER diagram; price snapshots on line items justified there | ✅ |
 | 2.02 | ≥4 use cases | M2–M5 | UC1–UC7 above, all built and walked through in `docs/DEMO.md` | ✅ |
 | 2.03 | MVC / Repository | M0 | `models/`, `repositories/` (with `IRepository`), `services/`, `routers/` (controllers), React pages as views | ✅ |
-| 2.04 | Images, text, tables, links | M2 | Club pages, fixture tables, nav and footer links, club colours, logo and club badges (SVG; real crests stay out of the repo) | ✅ |
+| 2.04 | Images, text, tables, links | M2 | Club pages, fixture tables, nav and footer links, club colours, logo and club crests (WebP in `frontend/public/crests/`, copied from the HandballManager assets; initials badge as fallback) | ✅ |
 | 3.01 | ≥3 classes | M0 | Models, repositories, services, errors, gateways | ✅ |
 | 3.02 | ≥1 interface | M3 | `IRepository`, `PaymentGateway` (Stripe and fake implementations), `FileValidator` (`ImageValidator`) | ✅ |
 | 3.03 | Authentication | M1 | Email + argon2 hash, signed HttpOnly session cookie | ✅ |
@@ -176,12 +176,12 @@ The activity log is a file (barem 7.01), not a table.
 | Fixtures | not in the data | Generate a double round robin (14 clubs, 26 rounds) from the club list, with kickoff dates in the near future. Label it demo data |
 | Ticket zones | not in the data | Split each stadium capacity into 3 zones (for example 20 / 50 / 30 %) with different prices |
 
-The clubs are Minaur Baia Mare, CSM Corona Brașov, SCM Universitatea Craiova, CSM București, CSM Iași 2020, CSM Târgu Mureș, CSU Știința București, Dunărea Brăila, Gloria Bistrița, SCM Râmnicu Vâlcea, Rapid București, CSM Slatina, CSM Târgu Jiu and HC Zalău.
+The clubs are Minaur Baia Mare, CSM Corona Brașov, SCM Craiova, CSM București, CSM Iași 2020, CSM Târgu Mureș, CSU Știința București, Dunărea Brăila, Gloria Bistrița, SCM Râmnicu Vâlcea, Rapid București, CSM Slatina, CSM Târgu Jiu and HC Zalău.
 
 ## 6. Known risks
 
 - **Scope:** M3 and M4 are each a week of work. If time runs short, drop M4's logo upload only after 9.04, 9.05 and 10.03 have a home elsewhere, because those criteria need an upload feature to exist. The cheapest fallback is a club-supporter avatar upload.
-- **Real clubs:** names and facts are fine for a course project. Keep crest images and player photos out of the repo (the game's colour data is already derived from crests), draw generic jerseys in the club colours, and show an "unofficial student project, Stripe test mode" notice. This matters more if the site goes public.
+- **Real clubs:** names and facts are fine for a course project. Crests were later added from the game's assets (decision: licensing is not a concern for a course project); player photos stay out, jerseys are generic drawings in the club colours, and show an "unofficial student project, Stripe test mode" notice. This matters more if the site goes public.
 - **Google Play:** do not link ticket purchases to in-game rewards without reading the store's billing policy first.
 - **Steganography:** re-encoding to lossy WebP defeats appended data and LSB payloads in practice, but is a mitigation, not a proof. Say so at the oral exam.
 - **Stripe locally:** webhooks need `stripe listen` running; without it the order stays pending.
