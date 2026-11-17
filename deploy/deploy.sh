@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Update a running server to the latest main. Run as the handballday user from /opt/handballday:
+# Update a running server to the latest main. Run as your sudo user from /opt/handballday:
 #   ./deploy/deploy.sh
-# Needs: git, python3-venv, node 22, and sudo rights for restarting the service.
+# Needs: git, python3-venv, node 22 (not with SKIP_FRONTEND=1), and sudo rights for restarting the service.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -15,11 +15,15 @@ mkdir -p logs uploads
 APP_ENV=prod .venv/bin/python -m app.seed   # idempotent: only adds what is missing
 cd ..
 
-echo "== frontend"
-cd frontend
-npm ci --silent
-npm run build   # writes dist/, which Apache serves, .htaccess included
-cd ..
+if [ -z "${SKIP_FRONTEND:-}" ]; then
+  echo "== frontend"
+  cd frontend
+  npm ci --silent
+  npm run build   # writes dist/, which Apache serves, .htaccess included
+  cd ..
+else
+  echo "== frontend skipped (SKIP_FRONTEND set): upload frontend/dist yourself, see deploy/README.md"
+fi
 
 echo "== restart"
 sudo systemctl restart handballday
