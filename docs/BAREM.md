@@ -29,7 +29,7 @@ Legend: ✅ done and proven · 🟡 done, but its final proof needs the site to 
 | 01 | Inheritance | 0,25 | ✅ | `SqlRepository(IRepository)` and every repository below it; `AppError` and its subclasses; models extend `IdMixin`/`CreatedAtMixin`; `FixtureDetail(FixtureOut)`; `StripeGateway(PaymentGateway)` |
 | 02 | ≥2 exception types handled | 0,25 | ✅ | `backend/app/errors.py`: validation, auth, forbidden, not found, conflict, payment, payload too large; one handler turns them into JSON. Rate-limit errors have their own handler |
 | 03 | Image carousel | 0,25 | ✅ | `frontend/src/Carousel.jsx` on the home page: autoplay, pause button, arrows, dots, swipe, arrow keys, pauses on hover/focus, off under reduced motion |
-| 04 | Animation | 0,25 | ✅ | Flow background, page entrance transition, carousel slide, jersey colours that transition live (`styles/animations.css`, `styles/pages.css`) |
+| 04 | Animation | 0,25 | ✅ | Page entrance transition, ticket carousel sliding over the court, club-block hover, jersey colours that transition live (`styles/animations.css`, `styles/pages.css`) |
 
 ## Nota 5: Stilizare și design responsive (1,00)
 

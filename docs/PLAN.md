@@ -37,7 +37,7 @@ Legend: ⬜ not started · 🟡 partial · ✅ done
 | 4.01 | Inheritance | M0 | Repositories extend a base, errors extend `AppError`, models extend mixins | ✅ |
 | 4.02 | ≥2 exception types | M1 | `AppError` family (validation, auth, forbidden, not found, conflict, payment) mapped to JSON by handlers | ✅ |
 | 4.03 | Image carousel | M2 | Home carousel of upcoming matches: autoplay, pause, arrows, dots, swipe, keyboard, reduced-motion aware | ✅ |
-| 4.04 | Animation | M2, M4 | Existing flow background, page transitions, jersey preview recolouring live | ✅ |
+| 4.04 | Animation | M2, M4 | Page transitions, carousel slide, club-block hover, jersey preview recolouring live | ✅ |
 | 5.01 | ≥2 CSS files, ≥10 properties | M2 | Split `styles.css` into `variables`, `base`, `layout`, `components`, `pages`, `animations` | ✅ |
 | 5.02 | Responsive | M2 | Mobile-first, breakpoints near 600 and 1024 px, screenshots at 390 / 768 / 1440 px in `docs/screenshots/` | ✅ |
 | 6.01 | ≥5 unit tests | M1+ | 165 pytest tests in `backend/tests/` (Vitest tests were not needed) | ✅ |

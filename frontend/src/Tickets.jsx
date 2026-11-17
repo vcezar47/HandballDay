@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { QRCodeSVG } from 'qrcode.react'
 import { getJerseys, getTickets } from './api.js'
-import { formatDate, formatPrice, formatTime } from './format.js'
+import { formatDate, formatPrice } from './format.js'
 import Jersey from './Jersey.jsx'
 import Seo from './Seo.jsx'
 import Status from './Status.jsx'
+import Ticket from './Ticket.jsx'
 
 const POLLS_AFTER_PAYMENT = 5
 const POLL_MS = 2500
@@ -57,7 +58,7 @@ export default function Tickets() {
           <h2>My jerseys</h2>
           <ul className="tickets">
             {jerseys.map((j) => (
-              <li key={j.id} className="ticket">
+              <li key={j.id} className="jersey-card">
                 <div className="jersey-thumb">
                   <Jersey
                     template={j.template}
@@ -86,23 +87,22 @@ export default function Tickets() {
       {tickets && (
         <ul className="tickets">
           {tickets.map((t) => (
-            <li key={t.id} className={t.status === 'used' ? 'ticket used' : 'ticket'}>
-              {/* white plate and quiet zone: scanners need dark-on-light with a margin */}
-              <div className="qr">
-                <QRCodeSVG value={t.code} size={150} marginSize={2} title={`QR code for ticket ${t.id}`} />
-              </div>
-              <div>
-                <h2>
-                  {t.fixture.home.name} <span className="vs">vs</span> {t.fixture.away.name}
-                </h2>
-                <p>
-                  {formatDate(t.fixture.kickoff_at)} &middot; {formatTime(t.fixture.kickoff_at)}
-                </p>
-                <p className="muted">
-                  {t.fixture.venue} &middot; {t.zone}
-                </p>
+            <li key={t.id} className="ticket-item">
+              <Ticket
+                fixture={t.fixture}
+                used={t.status === 'used'}
+                details={[
+                  ['Venue', t.fixture.venue],
+                  ['Zone', t.zone],
+                  ['Price', formatPrice(t.price_bani)],
+                ]}
+              >
+                {/* white plate and quiet zone: scanners need dark-on-light with a margin */}
+                <div className="qr">
+                  <QRCodeSVG value={t.code} size={130} marginSize={0} title={`QR code for ticket ${t.id}`} />
+                </div>
                 <p className={t.status === 'used' ? 'chip used' : 'chip'}>{t.status === 'used' ? 'Used' : 'Valid'}</p>
-              </div>
+              </Ticket>
             </li>
           ))}
         </ul>

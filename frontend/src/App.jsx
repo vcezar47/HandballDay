@@ -7,7 +7,6 @@ import ClubPage from './ClubPage.jsx'
 import Clubs from './Clubs.jsx'
 import FixtureDetail from './FixtureDetail.jsx'
 import Fixtures from './Fixtures.jsx'
-import FlowBackground from './FlowBackground.jsx'
 import Home from './Home.jsx'
 import Layout from './Layout.jsx'
 import RequireRole from './RequireRole.jsx'
@@ -40,7 +39,6 @@ export default function App() {
 
   return (
     <>
-      <FlowBackground />
       <Layout user={user} onLogout={handleLogout}>
         {/* the key remounts the page on every navigation, which replays its entrance animation */}
         <div className="page" key={pathname}>

@@ -1,38 +1,46 @@
-/* Public site: navigation, clubs, fixture tables, carousel. */
+/* Site pages: navigation, home, carousel and tickets, clubs, tables, buying, studio, admin. */
+
+/* ---- navigation ---- */
 
 .brand {
   display: inline-flex;
   align-items: center;
   gap: 10px;
   color: var(--text);
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   text-decoration: none;
-  text-transform: uppercase;
 }
 
 .site-header nav a,
 .link-btn {
-  padding: 4px 0;
+  padding: 4px 2px;
   border: 0;
-  border-bottom: 2px solid transparent;
+  border-bottom: 3px solid transparent;
   background: none;
-  color: var(--muted);
+  color: var(--text);
   font: inherit;
-  font-size: 0.9rem;
+  font-weight: 500;
   text-decoration: none;
   cursor: pointer;
-  transition: color 0.2s, border-color 0.2s;
 }
 
 .site-header nav a:hover,
 .link-btn:hover {
-  color: var(--text);
+  border-bottom-color: var(--soft);
 }
 
 .site-header nav a.active {
-  border-bottom-color: var(--accent-2);
-  color: var(--text);
+  border-bottom-color: var(--orange);
+}
+
+.site-header nav a.cta {
+  padding: 9px 20px;
+  border-radius: 999px;
+  background: var(--text);
+  color: #fff;
+  font-weight: 700;
 }
 
 .muted {
@@ -42,7 +50,7 @@
 .sub {
   display: block;
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 400;
 }
 
@@ -54,77 +62,436 @@
 .vs {
   color: var(--muted);
   font-size: 0.8em;
-  text-transform: uppercase;
+  font-weight: 500;
 }
 
-.pill {
-  display: inline-block;
-  padding: 6px 16px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  color: var(--text);
-  font-size: 0.8rem;
-  text-decoration: none;
+/* ---- home ---- */
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 24px 40px;
+  align-items: end;
+  padding: 24px 0 32px;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: clamp(2.75rem, 7vw, 6.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.hero em {
+  color: var(--court);
+  font-style: normal;
   white-space: nowrap;
-  transition: border-color 0.2s, background 0.2s;
 }
 
-.pill:hover {
-  border-color: var(--accent-2);
-  background: rgb(79 209 255 / 0.08);
+.hero p {
+  max-width: 44ch;
+  margin: 0 0 22px;
+  color: var(--muted);
+  font-size: 1.25rem;
 }
 
-.ghost.small {
-  padding: 9px 20px;
-  letter-spacing: 0.15em;
-  animation: none;
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
-/* ---- clubs ---- */
+.home section + section {
+  margin-top: 72px;
+}
 
-.club-card {
+.home h2 {
+  margin: 0 0 24px;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+}
+
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 20px;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 320px;
+  padding: clamp(24px, 3vw, 40px);
+  border-radius: var(--radius);
+}
+
+.panel.dark {
+  background: var(--text);
+  color: #fff;
+}
+
+.panel.orange {
+  background: var(--orange);
+}
+
+.panel h2 {
+  margin: 0;
+  font-size: clamp(1.75rem, 3vw, 2.75rem);
+}
+
+.panel p {
+  max-width: 36ch;
+  margin: 12px 0 0;
+}
+
+.panel .jersey {
+  align-self: flex-end;
+  width: 190px;
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.steps li {
+  padding: 18px 24px;
+  border-radius: var(--radius);
+  background: var(--soft);
+  color: var(--text);
+}
+
+.steps strong {
+  display: block;
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+}
+
+/* ---- carousel: tickets slide across the court ---- */
+
+.carousel {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--court);
+}
+
+.carousel:focus-visible {
+  outline: 3px solid var(--orange);
+  outline-offset: 3px;
+}
+
+.court {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-viewport {
+  position: relative;
+  overflow: hidden;
+  touch-action: pan-y; /* vertical scrolling stays native, horizontal drags are our swipe */
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.slide {
+  flex: 0 0 100%;
+  display: grid;
+  place-items: center;
+  min-height: clamp(340px, 30vw, 440px);
+  padding: clamp(24px, 4vw, 56px) 12px 84px;
+  filter: drop-shadow(0 14px 20px rgb(12 27 51 / 0.3));
+}
+
+.carousel .ticket {
+  width: min(100%, 680px);
+}
+
+.carousel-controls {
+  position: absolute;
+  right: 0;
+  bottom: 16px;
+  left: 0;
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 16px;
-  border: 1px solid var(--border);
-  border-top: 3px solid var(--club);
-  border-radius: 12px;
-  background: var(--glass);
-  color: var(--text);
-  text-decoration: none;
-  transition: transform 0.2s, box-shadow 0.2s;
+  justify-content: center;
+  gap: 10px;
 }
 
-.club-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgb(0 0 0 / 0.4);
+.icon-btn {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.icon-btn:hover {
+  background: var(--soft);
+}
+
+.carousel :focus-visible {
+  outline-color: #fff;
+}
+
+.dots {
+  display: flex;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.85);
+}
+
+/* 24px hit area around a 10px dot */
+.dot {
+  position: relative;
+  width: 24px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.dot::after {
+  content: '';
+  position: absolute;
+  inset: 15px 7px;
+  border-radius: 50%;
+  background: #9fb0c9;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.dot.active::after {
+  background: var(--orange);
+  transform: scale(1.3);
+}
+
+/* ---- the ticket: home carousel and "My tickets" ---- */
+
+.ticket {
+  --stub: 112px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--stub);
+  background: var(--panel);
+  color: var(--text);
+  /* round notches where the stub tears off */
+  -webkit-mask:
+    radial-gradient(circle 15px at calc(100% - var(--stub)) 0, #0000 98%, #000) top / 100% 51% no-repeat,
+    radial-gradient(circle 15px at calc(100% - var(--stub)) 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
+  mask:
+    radial-gradient(circle 15px at calc(100% - var(--stub)) 0, #0000 98%, #000) top / 100% 51% no-repeat,
+    radial-gradient(circle 15px at calc(100% - var(--stub)) 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
+}
+
+.ticket-main {
+  display: grid;
+  gap: 16px;
+  padding-bottom: 24px;
+}
+
+.ticket-main > :not(.band) {
+  padding-inline: 20px;
+}
+
+.band {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 16px;
+}
+
+.kick {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+  margin: 0;
+}
+
+.kick strong {
+  font-size: clamp(1.75rem, 3vw, 2.75rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.kick span {
+  color: var(--muted);
+}
+
+.ticket h2.ticket-teams {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 6px 14px;
+  align-items: center;
+  margin: 0;
+  font-size: clamp(1.25rem, 2.3vw, 2rem);
+  line-height: 1.05;
+}
+
+.ticket-teams .badge {
+  width: 46px;
+  height: 46px;
+}
+
+.ticket-teams .team-line {
+  display: contents;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 28px;
+  margin: 0;
+}
+
+.meta div {
+  display: flex;
+  flex-direction: column-reverse; /* value above its label */
+}
+
+.meta dt {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.meta dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.stub {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 10px;
+  padding: 16px 10px;
+  border-left: 3px dotted var(--border);
+  text-align: center;
+}
+
+.stub small {
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.3;
+}
+
+.stub .pill {
+  background: var(--orange);
+  padding: 8px 14px;
+  font-size: 0.85rem;
+}
+
+.qr {
+  display: grid;
+  place-items: center;
+  max-width: 100%;
+}
+
+.qr svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ---- clubs: one flat colour block each ---- */
+
+.club-blocks {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--radius);
+  list-style: none;
+}
+
+.club-blocks a {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  aspect-ratio: 1 / 1;
+  padding: 16px;
+  background: var(--c);
+  color: var(--t);
+  font-size: 0.85rem;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  overflow-wrap: break-word;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: transform 0.2s;
+}
+
+.club-blocks a:hover,
+.club-blocks a:focus-visible {
+  z-index: 1;
+  transform: scale(1.05);
+  outline: 3px solid #fff;
+  outline-offset: -3px;
+}
+
+.club-blocks a:hover,
+.club-blocks a:focus-visible {
+  z-index: 1;
+}
+
+@media (min-width: 600px) {
+  .club-blocks {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+  .club-blocks a {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .club-blocks {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+  .club-blocks a {
+    font-size: clamp(0.85rem, 1.1vw, 1.1rem);
+  }
 }
 
 .facts div {
-  padding: 12px 14px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--glass);
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  background: var(--panel);
 }
 
 .facts dt {
   color: var(--muted);
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 0.85rem;
 }
 
 .facts dd {
   margin: 4px 0 0;
+  font-weight: 600;
 }
 
 .swatch {
   display: inline-block;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   margin-right: 6px;
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   border-radius: 50%;
 }
 
@@ -136,9 +503,8 @@
 
 .table-wrap {
   overflow-x: auto;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--glass);
+  border-radius: var(--radius);
+  background: var(--panel);
 }
 
 .teams {
@@ -158,22 +524,10 @@
   white-space: nowrap;
 }
 
-/* phones: one team per line */
-@media (max-width: 599px) {
-  .teams {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
-  }
-  th,
-  td {
-    padding: 10px 8px;
-  }
-}
-
 .teams a,
 .team {
   color: var(--text);
+  font-weight: 600;
   text-decoration: none;
 }
 
@@ -187,8 +541,9 @@
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   text-align: center;
 }
 
@@ -198,133 +553,37 @@
   text-align: center;
 }
 
-/* ---- carousel ---- */
-
-.carousel {
-  max-width: 560px;
-  margin: 44px auto 0;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  background: var(--glass);
-  backdrop-filter: blur(12px);
-  animation: fade-in 2s 2.2s ease both;
-}
-
-.carousel:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-}
-
-.carousel-viewport {
-  overflow: hidden;
-  border-radius: 18px 18px 0 0;
-  touch-action: pan-y; /* vertical scrolling stays native, horizontal drags are our swipe */
-}
-
-.carousel-track {
-  display: flex;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.slide {
-  flex: 0 0 100%;
-  padding: 26px 20px 22px;
-}
-
-.slide h2 {
-  margin: 14px 0 6px;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-.slide p {
-  margin: 0 0 14px;
-}
-
-.slide-date {
-  color: var(--accent-2);
-  font-size: 0.8rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-}
-
-.slide-teams {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-}
-
-.carousel-controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 10px 12px 14px;
-}
-
-.icon-btn {
-  min-width: 36px;
-  min-height: 36px;
-  padding: 0 10px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--text);
-  font: inherit;
-  font-size: 0.8rem;
-  cursor: pointer;
-}
-
-.icon-btn:hover {
-  border-color: var(--accent-2);
-}
-
-.dots {
-  display: flex;
-  gap: 4px;
-}
-
-/* 24px hit area around a 10px dot */
-.dot {
-  position: relative;
-  width: 24px;
-  height: 24px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-}
-
-.dot::after {
-  content: '';
-  position: absolute;
-  inset: 7px;
-  border-radius: 50%;
-  background: var(--border);
-  transition: background 0.2s, transform 0.2s;
-}
-
-.dot.active::after {
-  background: var(--accent-2);
-  transform: scale(1.3);
+/* phones: one team per line */
+@media (max-width: 599px) {
+  .teams {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+  th,
+  td {
+    padding: 10px 8px;
+  }
 }
 
 /* ---- buying, tickets, staff ---- */
 
 .buy {
   max-width: 420px;
-  margin-top: 12px;
+  padding: 22px;
+  margin-top: 14px;
+  border-radius: var(--radius);
+  background: var(--panel);
 }
 
 .total {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
 }
 
 .small {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
 }
 
 .narrow {
@@ -340,59 +599,58 @@
 
 .tickets {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 460px), 1fr));
+  gap: 20px;
   padding: 0;
   margin: 20px 0 0;
   list-style: none;
 }
 
-.ticket {
+.ticket-item {
+  filter: drop-shadow(0 4px 10px rgb(12 27 51 / 0.14));
+}
+
+.tickets .ticket {
+  --stub: 170px;
+}
+
+.ticket.used {
+  opacity: 0.6;
+}
+
+.chip {
+  display: inline-block;
+  padding: 2px 12px;
+  border-radius: 999px;
+  background: var(--success-bg);
+  color: var(--success-text);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.chip.used {
+  background: var(--soft);
+  color: var(--muted);
+}
+
+.jersey-card {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 18px;
   padding: 16px;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  background: var(--glass);
+  border-radius: var(--radius);
+  background: var(--panel);
 }
 
-.ticket h2 {
+.jersey-card h2 {
   margin: 0 0 6px;
-  font-size: 1rem;
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
 }
 
-.ticket p {
+.jersey-card p {
   margin: 0 0 4px;
-}
-
-.ticket.used .qr {
-  opacity: 0.35;
-}
-
-.qr {
-  display: grid;
-  place-items: center;
-  padding: 2px;
-  border-radius: 8px;
-  background: #fff;
-}
-
-.chip {
-  display: inline-block;
-  margin-top: 6px;
-  padding: 2px 12px;
-  border-radius: 999px;
-  background: var(--success-bg);
-  color: var(--success-text);
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.chip.used {
-  background: rgb(255 255 255 / 0.08);
-  color: var(--muted);
 }
 
 fieldset {
@@ -400,14 +658,14 @@ fieldset {
   flex-direction: column;
   gap: 14px;
   padding: 14px;
-  border: 1px solid var(--border);
+  border: 2px solid var(--soft);
   border-radius: 10px;
 }
 
 legend {
   padding: 0 6px;
   color: var(--muted);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
 }
 
 .zone-row {
@@ -422,7 +680,7 @@ legend {
 
 .scan-result {
   margin-top: 16px;
-  font-size: 1rem;
+  font-size: 1.05rem;
 }
 
 /* ---- jersey studio ---- */
@@ -466,14 +724,14 @@ input[type='color'] {
   display: grid;
   place-items: center;
   padding: 12px;
-  border-radius: 12px;
-  background: rgb(255 255 255 / 0.04);
+  border-radius: var(--radius);
+  background: var(--soft);
 }
 
 .jersey {
   width: min(100%, 230px);
   height: auto;
-  filter: drop-shadow(0 8px 14px rgb(0 0 0 / 0.45));
+  filter: drop-shadow(0 8px 0 rgb(12 27 51 / 0.12));
 }
 
 .jersey-thumb {
@@ -490,16 +748,6 @@ input[type='color'] {
   transition: fill 0.4s;
 }
 
-@media (min-width: 600px) {
-  .buy {
-    max-width: 720px;
-  }
-  .studio {
-    grid-template-columns: 240px minmax(0, 1fr);
-    align-items: start;
-  }
-}
-
 /* ---- admin and CAPTCHA ---- */
 
 .tabs {
@@ -509,8 +757,8 @@ input[type='color'] {
 textarea {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
   background: var(--field);
   color: var(--text);
   font: inherit;
@@ -519,8 +767,9 @@ textarea {
 }
 
 textarea:focus {
-  outline: 2px solid var(--accent);
+  outline: 3px solid var(--court);
   outline-offset: 1px;
+  border-color: var(--court);
 }
 
 .club-form {
@@ -540,6 +789,15 @@ textarea:focus {
   overflow-wrap: anywhere;
 }
 
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+  padding: 0;
+  margin: 20px 0 0;
+  list-style: none;
+}
+
 .uploads {
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr));
 }
@@ -550,9 +808,8 @@ textarea:focus {
   align-items: center;
   gap: 8px;
   padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--glass);
+  border-radius: var(--radius);
+  background: var(--panel);
   text-align: center;
 }
 
@@ -561,14 +818,45 @@ textarea:focus {
   height: 120px;
   object-fit: contain;
   border-radius: 8px;
-  background: repeating-conic-gradient(#2b2b3a 0% 25%, #1b1b28 0% 50%) 50% / 16px 16px;
+  background: repeating-conic-gradient(#fff 0% 25%, var(--soft) 0% 50%) 50% / 16px 16px;
 }
 
 .upload-card p {
   margin: 0;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
 }
 
 .turnstile {
   min-height: 0; /* the widget sets its own height */
+}
+
+/* ---- the card around the log in form ---- */
+
+.card {
+  width: 100%;
+  max-width: 420px;
+  padding: 30px 28px 32px;
+  margin: 40px auto 0;
+  border-radius: var(--radius);
+  background: var(--panel);
+  box-shadow: 0 10px 30px rgb(12 27 51 / 0.1);
+}
+
+/* ---- tablet and up ---- */
+
+@media (min-width: 600px) {
+  .buy {
+    max-width: 720px;
+  }
+  .studio {
+    grid-template-columns: 240px minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+@media (max-width: 899px) {
+  .hero,
+  .split {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }

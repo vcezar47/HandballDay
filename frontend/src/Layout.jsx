@@ -5,7 +5,7 @@ export default function Layout({ user, onLogout, children }) {
     <div className="stage">
       <header className="site-header">
         <Link className="brand" to="/">
-          <img src="/logo.svg" alt="" width="28" height="28" />
+          <img src="/logo.svg" alt="" width="32" height="32" />
           HandballDay
         </Link>
         <nav aria-label="Main">
@@ -17,19 +17,24 @@ export default function Layout({ user, onLogout, children }) {
           {user?.role === 'admin' && <NavLink to="/staff/scan">Scan</NavLink>}
           {user && (
             <button type="button" className="link-btn" onClick={onLogout}>
-              Leave ({user.display_name})
+              Log out ({user.display_name})
             </button>
           )}
-          {user === null && <NavLink to="/login">Log in</NavLink>}
+          {user === null && (
+            <NavLink className="cta" to="/login">
+              Log in
+            </NavLink>
+          )}
         </nav>
       </header>
       {children}
       <footer className="site-footer">
-        <p>Unofficial student project. Payments run in Stripe test mode and no real tickets are sold.</p>
-        <p>
-          <Link to="/clubs">Clubs</Link> &middot; <Link to="/fixtures">Fixtures</Link> &middot;{' '}
-          <a href="/sitemap.xml">Sitemap</a>
-        </p>
+        <div>
+          <p>Unofficial student project. Payments run in Stripe test mode and no real tickets are sold.</p>
+          <p>
+            <Link to="/clubs">Clubs</Link> &middot; <Link to="/fixtures">Fixtures</Link> &middot; <a href="/sitemap.xml">Sitemap</a>
+          </p>
+        </div>
       </footer>
     </div>
   )

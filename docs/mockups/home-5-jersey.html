@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HandballDay – Option 5: Jersey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Saira+Semi+Condensed:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--ground:#e3e7eb;--ink:#101820;--muted:#52606d;--p:#d7041e;--pt:#fff;--paper:#fff;--mesh:radial-gradient(#10182016 1.1px,transparent 1.5px)}
+*{box-sizing:border-box;margin:0}
+body{font:500 18px/1.5 'Saira Semi Condensed',system-ui,sans-serif;background:var(--ground) var(--mesh);background-size:6px 6px;color:var(--ink)}
+a{color:inherit}
+.wrap{padding-inline:clamp(16px,3vw,40px);max-width:1440px;margin-inline:auto}
+header{display:flex;justify-content:space-between;align-items:center;padding-block:18px}
+.brand{font-weight:900;font-size:26px;text-decoration:none;text-transform:uppercase;letter-spacing:.02em;display:flex;gap:10px;align-items:center}
+.brand i{width:28px;height:28px;background:var(--p);transition:background .4s;clip-path:polygon(25% 0,40% 0,50% 12%,60% 0,75% 0,100% 22%,86% 42%,76% 35%,76% 100%,24% 100%,24% 35%,14% 42%,0 22%)}
+nav{display:flex;gap:26px;align-items:center;font-weight:600}
+nav a{text-decoration:none}
+nav .cta{background:var(--ink);color:#fff;padding:8px 20px;border-radius:6px}
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,64px);align-items:center;padding-block:40px 60px}
+h1{font-size:clamp(52px,8vw,124px);line-height:.88;font-weight:900;text-transform:uppercase;letter-spacing:-.01em}
+h1 span{color:var(--p);transition:color .4s}
+.lede{margin:20px 0 26px;font-size:21px;color:var(--muted);max-width:40ch}
+.picker{background:var(--paper);padding:20px;border-radius:10px;display:grid;gap:16px}
+.picker h2{font-size:18px;font-weight:700}
+.chips{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.chips button{aspect-ratio:1;border:3px solid transparent;border-radius:50%;background:none;padding:0;cursor:pointer;display:grid;place-items:center;transition:transform .15s,border-color .15s}
+.chips button:hover{transform:scale(1.1)}
+.chips button[aria-pressed=true]{border-color:var(--ink)}
+.chips .badge{width:100%;height:100%}
+.inputs{display:grid;grid-template-columns:1fr 90px auto;gap:10px;align-items:end}
+label{display:grid;gap:4px;font-size:14px;font-weight:600;color:var(--muted)}
+input{font:700 20px 'Saira Semi Condensed';padding:10px 12px;border:2px solid #cfd6dd;border-radius:6px;background:#fff;color:var(--ink);text-transform:uppercase;width:100%}
+input:focus-visible{outline:3px solid var(--p);outline-offset:1px;border-color:var(--p)}
+.btn{background:var(--p);color:var(--pt);padding:13px 22px;font-weight:700;text-decoration:none;border-radius:6px;transition:background .4s,color .4s;white-space:nowrap;display:inline-block}
+.stage{background:var(--paper);border-radius:10px;display:grid;place-items:center;aspect-ratio:1/1;position:relative;overflow:hidden;background-image:var(--mesh);background-size:6px 6px}
+.stage:before{content:"";position:absolute;inset:auto 0 0 0;height:22%;background:var(--p);transition:background .4s}
+.stage .jersey{position:relative;width:78%;filter:drop-shadow(0 10px 0 #10182022)}
+.jersey path{stroke:#101820;stroke-width:1.2;stroke-linejoin:round}
+.jersey .j-body,.jersey .j-trim{transition:fill .4s}
+.stage small{position:absolute;left:18px;bottom:14px;color:var(--pt);font-weight:700;font-size:18px;z-index:1}
+/* fixtures band */
+.cv{background:var(--ink);color:#fff;border-radius:10px}
+.cv:focus-visible{outline:3px solid var(--p);outline-offset:3px}
+.cv-viewport{overflow:hidden;border-radius:10px 10px 0 0}
+.cv-track{display:flex;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.cv-slide{flex:0 0 100%;display:grid;grid-template-columns:150px 1fr auto auto;gap:24px;align-items:center;padding:26px clamp(16px,3vw,40px)}
+.cv-slide .when b{display:block;font-size:34px;line-height:1;font-weight:800;text-transform:uppercase}
+.cv-slide .when span{color:#b8c2cc}
+.vsrow{display:flex;gap:16px;align-items:center;font-weight:800;font-size:clamp(20px,2.4vw,34px);line-height:1.05;text-transform:uppercase}
+.vsrow .badge{width:56px;height:56px;flex:none;background:#fff;border-radius:50%}
+.vsrow em{font-style:normal;color:#8896a3;font-size:.6em}
+.cv-slide .venue{color:#b8c2cc;font-size:16px;max-width:18ch}
+.cv-slide a{background:#fff;color:var(--ink);padding:11px 22px;font-weight:700;text-decoration:none;border-radius:6px}
+.cv-controls{display:flex;align-items:center;gap:10px;padding:10px 16px 14px;justify-content:center}
+.cv-btn{font:700 15px 'Saira Semi Condensed';background:#25303b;color:#fff;border:0;min-width:38px;height:36px;padding-inline:14px;border-radius:6px;cursor:pointer}
+.cv-btn:hover{background:#fff;color:var(--ink)}
+.cv-dots{display:flex;gap:8px}
+.cv-dot{width:10px;height:10px;border-radius:50%;border:0;background:#3b4854;cursor:pointer;padding:0}
+.cv-dot.active{background:#fff}
+section{padding-block:80px 0}
+h3{font-size:clamp(34px,4.6vw,68px);line-height:.92;font-weight:900;text-transform:uppercase}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.two>div{background:var(--paper);border-radius:10px;padding:clamp(22px,3vw,40px);display:grid;gap:14px;align-content:start;background-image:var(--mesh);background-size:6px 6px}
+.two p{color:var(--muted);font-size:19px;max-width:38ch}
+.two a{font-weight:700;color:var(--ink)}
+footer{margin-top:80px;background:var(--ink);color:#b8c2cc;padding-block:30px;font-size:15px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+@media(max-width:900px){
+ .hero{grid-template-columns:1fr}
+ .stage{order:-1;aspect-ratio:4/3}.stage .jersey{width:56%}
+ .cv-slide{grid-template-columns:1fr auto;grid-template-areas:"w a" "t t" "v v"}
+ .cv-slide .when{grid-area:w}.cv-slide a{grid-area:a}.cv-slide .vsrow{grid-area:t}.cv-slide .venue{grid-area:v;max-width:none}
+ .two{grid-template-columns:1fr}.vsrow{flex-wrap:wrap}
+ .inputs{grid-template-columns:1fr 80px}.inputs .btn{grid-column:1/-1;text-align:center}
+ nav a:not(.cta){display:none}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="brand" href="#"><i></i>HandballDay</a>
+  <nav aria-label="Main"><a href="#">Clubs</a><a href="#">Fixtures</a><a href="#">My tickets</a><a class="cta" href="#">Log in</a></nav>
+</header>
+<main>
+<div class="hero">
+  <div>
+    <h1>Wear<br>the <span>number.</span></h1>
+    <p class="lede">Pick your club, put your name on the back, and add the jersey to your match ticket. One payment, collected at the hall.</p>
+    <div class="picker">
+      <h2 id="pick">Choose your club</h2>
+      <div class="chips" id="chips" role="group" aria-labelledby="pick"></div>
+      <div class="inputs">
+        <label>Name<input id="name" maxlength="12" value="Popescu"></label>
+        <label>No.<input id="num" maxlength="2" inputmode="numeric" value="9"></label>
+        <a class="btn" href="#">Open the studio</a>
+      </div>
+    </div>
+  </div>
+  <div class="stage"><div id="jersey" style="display:contents"></div><small id="cname"></small></div>
+</div>
+
+<div id="carousel"></div>
+
+<section>
+  <div class="two">
+    <div><h3>Tickets for<br>every home game</h3><p>Pick a Liga Florilor match, choose a stand, and get a QR ticket in your account.</p><a href="#">Browse fixtures →</a></div>
+    <div><h3>Pickup<br>at the hall</h3><p>Your jersey is waiting at the match you bought it for. No address, no delivery.</p><a href="#">How it works →</a></div>
+  </div>
+</section>
+</main>
+</div>
+<footer><div class="wrap"><p>© HandballDay · Liga Florilor 2026/27</p><p>Unofficial student project. Payments run in Stripe test mode and no real tickets are sold.</p></div></footer>
+
+<script src="shared.js"></script>
+<script>
+const root = document.documentElement, $ = (id) => document.getElementById(id)
+let cur = CLUBS[8]
+function draw() {
+  $('jersey').innerHTML = jersey(cur, $('num').value || '9', ($('name').value || 'NAME').toUpperCase())
+  root.style.setProperty('--p', cur.primary); root.style.setProperty('--pt', textColour(cur.primary))
+  $('cname').textContent = cur.name
+  document.querySelectorAll('#chips button').forEach((b, i) => b.setAttribute('aria-pressed', CLUBS[i] === cur))
+}
+$('chips').innerHTML = CLUBS.map((c) => `<button type="button" aria-label="${c.name}" title="${c.name}">${badge(c, 44)}</button>`).join('')
+document.querySelectorAll('#chips button').forEach((b, i) => (b.onclick = () => { cur = CLUBS[i]; draw() }))
+$('name').oninput = $('num').oninput = draw
+draw()
+carousel($('carousel'), { render: (f) => `
+  <div class="when"><b>${f.date}</b><span>${f.time}</span></div>
+  <div class="vsrow">${badge(f.home)}<span>${f.home.name}</span><em>vs</em><span>${f.away.name}</span>${badge(f.away)}</div>
+  <div class="venue">${f.venue}</div><a href="#">See tickets</a>` })
+</script>
+</body>
+</html>

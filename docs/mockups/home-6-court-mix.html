@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HandballDay – Option 6: Court + Ticket + Club colours</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--ground:#f5f7fa;--ink:#0c1b33;--muted:#4b5b73;--court:#2563c9;--zone:#f26b21;--soft:#e6ecf4;--r:14px;--qr-bg:#fff}
+*{box-sizing:border-box;margin:0}
+body{font:400 18px/1.55 Outfit,system-ui,sans-serif;background:var(--ground);color:var(--ink)}
+a{color:inherit}
+.wrap{padding-inline:clamp(16px,3vw,40px);max-width:1440px;margin-inline:auto}
+header{display:flex;justify-content:space-between;align-items:center;padding-block:18px}
+.brand{display:flex;gap:10px;align-items:center;font-weight:800;font-size:22px;text-decoration:none;letter-spacing:-.02em}
+.brand i{width:30px;height:30px;border-radius:50%;background:var(--zone);display:grid;place-items:center}
+.brand i:after{content:"";width:12px;height:12px;border-radius:50%;background:#fff}
+nav{display:flex;gap:26px;align-items:center;font-weight:500}
+nav a{text-decoration:none}
+nav .cta{background:var(--ink);color:#fff;padding:10px 20px;border-radius:99px}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:end;padding-block:56px 36px}
+.hero>*{min-width:0}
+h1{font-size:clamp(44px,7vw,104px);line-height:.95;letter-spacing:-.04em;font-weight:800}
+h1 em{font-style:normal;color:var(--court)}
+.hero p{max-width:44ch;color:var(--muted);font-size:20px;margin-bottom:22px}
+.btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-block;padding:14px 26px;border-radius:99px;font-weight:700;text-decoration:none;background:var(--zone);color:#fff}
+.btn.alt{background:var(--soft);color:var(--ink)}
+
+/* the carousel: tickets slide across the court */
+.cv{position:relative;border-radius:var(--r);overflow:hidden;background:var(--court)}
+.cv:focus-visible{outline:3px solid var(--zone);outline-offset:3px}
+.cv svg.court{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.cv-viewport{overflow:hidden;position:relative;z-index:1}
+.cv-track{display:flex;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.cv-slide{flex:0 0 100%;display:grid;place-items:center;padding:clamp(24px,4vw,56px) 16px 84px}
+.ticket{width:min(100%,680px);display:grid;grid-template-columns:1fr 170px;background:#fff;color:var(--ink);filter:drop-shadow(0 14px 20px #0c1b3344);
+  -webkit-mask:radial-gradient(circle 15px at calc(100% - 170px) 0,#0000 98%,#000) top/100% 51% no-repeat,radial-gradient(circle 15px at calc(100% - 170px) 100%,#0000 98%,#000) bottom/100% 51% no-repeat;
+  mask:radial-gradient(circle 15px at calc(100% - 170px) 0,#0000 98%,#000) top/100% 51% no-repeat,radial-gradient(circle 15px at calc(100% - 170px) 100%,#0000 98%,#000) bottom/100% 51% no-repeat}
+.main{padding:0 0 26px;display:grid;gap:18px}
+.band{height:16px;display:grid;grid-template-columns:1fr 1fr}
+.main>*:not(.band){padding-inline:30px}
+.kick{display:flex;justify-content:space-between;align-items:baseline;font-weight:800}
+.kick b{font-size:44px;line-height:1;letter-spacing:-.04em}
+.kick span{color:var(--muted);font-weight:500;font-size:16px}
+.teams{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;align-items:center;font-weight:800;font-size:clamp(22px,2.3vw,32px);line-height:1.05;letter-spacing:-.02em}
+.teams .badge{width:50px;height:50px}
+.meta{display:flex;gap:28px;font-size:15px;color:var(--muted)}
+.meta b{display:block;color:var(--ink);font-size:17px}
+.stub{border-left:3px dotted #c3cbd8;display:grid;justify-items:center;align-content:center;gap:10px;padding:20px;text-align:center}
+.stub .qr{width:110px;height:110px}
+.stub small{color:var(--muted);font-size:13px;line-height:1.3}
+.stub a{background:var(--zone);color:#fff;padding:8px 14px;font-weight:700;font-size:14px;text-decoration:none;border-radius:99px}
+.cv-controls{position:absolute;z-index:2;left:0;right:0;bottom:16px;display:flex;justify-content:center;align-items:center;gap:10px}
+.cv-btn{font:600 15px Outfit;background:#fff;color:var(--ink);border:0;border-radius:99px;min-width:40px;height:40px;padding-inline:14px;cursor:pointer}
+.cv-dots{display:flex;gap:8px;background:#ffffffd9;padding:14px;border-radius:99px}
+.cv-dot{width:10px;height:10px;border-radius:50%;border:0;background:#9fb0c9;cursor:pointer;padding:0}
+.cv-dot.active{background:var(--zone);transform:scale(1.3)}
+
+section{padding-block:72px}
+h2{font-size:clamp(32px,4vw,56px);letter-spacing:-.03em;line-height:1;font-weight:800;margin-bottom:28px}
+
+/* club picker from option 4: one flat colour block per club */
+.clubs{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-radius:var(--r);overflow:hidden}
+.clubs a{aspect-ratio:1/1;display:flex;flex-direction:column;justify-content:space-between;padding:16px;text-decoration:none;background:var(--c);color:var(--t);font:800 clamp(15px,1.35vw,20px)/1.05 Outfit;letter-spacing:-.02em;text-transform:uppercase;transition:transform .2s;position:relative;overflow-wrap:break-word;hyphens:auto}
+.clubs a:hover,.clubs a:focus-visible{transform:scale(1.05);z-index:2;outline:3px solid #fff;outline-offset:-3px}
+.clubs .badge{width:44px;height:44px}
+
+.split{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.panel{border-radius:var(--r);padding:40px;min-height:320px;display:flex;flex-direction:column;justify-content:space-between;gap:24px}
+.panel.a{background:var(--ink);color:#fff}
+.panel.b{background:var(--zone);color:#fff}
+.panel h3{font-size:clamp(28px,3vw,44px);line-height:1;letter-spacing:-.03em}
+.panel p{max-width:36ch}
+#jersey{align-self:flex-end}.panel .jersey{width:200px}
+.jersey path{stroke:#0c1b33;stroke-width:1.2;stroke-linejoin:round}
+.steps{display:flex;flex-direction:column;gap:16px;list-style:none;padding:0}
+.steps li{background:var(--soft);color:var(--ink);border-radius:var(--r);padding:20px 26px;font-weight:600}
+.steps b{display:block;font-size:26px;letter-spacing:-.02em;margin-bottom:2px}
+footer{background:var(--ink);color:#c5d0e0;padding-block:36px;font-size:15px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+@media(max-width:900px){
+ .hero{grid-template-columns:1fr;padding-block:20px 30px}
+ .clubs{grid-template-columns:repeat(3,minmax(0,1fr))}.clubs a{padding:10px;font-size:14px}
+ .split{grid-template-columns:1fr}
+ .ticket{grid-template-columns:1fr 112px;-webkit-mask:none;mask:none}
+ .stub{padding:12px}.stub .qr{width:80px;height:80px}.kick b{font-size:34px}.meta{flex-wrap:wrap;gap:14px}
+ .main>*:not(.band){padding-inline:20px}
+ .cv-slide{min-height:380px}
+ nav a:not(.cta){display:none}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="brand" href="#"><i></i>HandballDay</a>
+  <nav aria-label="Main"><a href="#">Clubs</a><a href="#">Fixtures</a><a href="#">My tickets</a><a class="cta" href="#">Log in</a></nav>
+</header>
+
+<main>
+<div class="hero">
+  <h1>Your seat on the <em>9‑metre</em> line.</h1>
+  <div>
+    <p>Pick a Liga Florilor match, choose your stand, and get a QR ticket in minutes. Add a jersey in your club's colours and collect it at the hall.</p>
+    <div class="btns"><a class="btn" href="#">Browse fixtures</a><a class="btn alt" href="#">Design a jersey</a></div>
+  </div>
+</div>
+
+<div id="carousel">
+  <svg class="court" viewBox="-12 -12 424 224" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <rect x="-12" y="-12" width="424" height="224" fill="#2563c9"/>
+    <g id="half">
+      <path d="M0 33A60 60 0 0 1 60 93L60 107A60 60 0 0 1 0 167Z" fill="#f26b21"/>
+      <path d="M0 3A90 90 0 0 1 90 93L90 107A90 90 0 0 1 0 197" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="9 6"/>
+      <path d="M0 33A60 60 0 0 1 60 93L60 107A60 60 0 0 1 0 167" fill="none" stroke="#fff" stroke-width="2.5"/>
+      <path d="M70 97V103" stroke="#fff" stroke-width="2.5"/>
+      <rect x="-5" y="93" width="5" height="14" fill="#fff"/>
+    </g>
+    <use href="#half" transform="translate(400 0) scale(-1 1)"/>
+    <rect x="0" y="0" width="400" height="200" fill="none" stroke="#fff" stroke-width="2.5"/>
+    <path d="M200 0V200" stroke="#fff" stroke-width="2.5"/>
+    <circle cx="200" cy="100" r="3" fill="#fff"/>
+  </svg>
+</div>
+</main>
+</div>
+
+<div class="wrap">
+ <section aria-labelledby="clubs-h">
+  <h2 id="clubs-h">14 clubs. 14 colours.</h2>
+  <div class="clubs" id="clubs"></div>
+ </section>
+
+ <section class="split" style="padding-top:0">
+  <div class="panel a"><h3>Buy once. Walk in with a QR.</h3><ol class="steps"><li><b>Pick</b>a match and a stand</li><li><b>Pay</b>once through Stripe</li><li><b>Scan</b>at the door, done</li></ol></div>
+  <div class="panel b"><div><h3>Wear your club's number.</h3><p style="margin-top:12px">Design a jersey, preview it live, and add it to the same checkout. Pick it up at the match.</p></div><div id="jersey"></div></div>
+ </section>
+</div>
+
+<footer><div class="wrap"><p>© HandballDay · Liga Florilor 2026/27</p><p>Unofficial student project. Payments run in Stripe test mode and no real tickets are sold.</p></div></footer>
+
+<script src="shared.js"></script>
+<script>
+const court = document.querySelector('#carousel svg')
+const holder = document.getElementById('carousel')
+carousel(holder, { render: (f, k) => `
+  <div class="ticket">
+    <div class="main">
+      <div class="band"><span style="background:${f.home.primary}"></span><span style="background:${f.away.primary}"></span></div>
+      <div class="kick"><b>${f.date}</b><span>Kick-off ${f.time}</span></div>
+      <div class="teams">${badge(f.home)}<span>${f.home.name}</span>${badge(f.away)}<span>${f.away.name}</span></div>
+      <div class="meta"><div><b>${f.venue}</b>Venue</div><div><b>Main stand</b>Zone</div><div><b>from 25 lei</b>Price</div></div>
+    </div>
+    <div class="stub">${qr(k + 3, 110)}<small>Scan at the door</small><a href="#">See tickets</a></div>
+  </div>` })
+holder.querySelector('.cv-viewport').before(court)
+document.getElementById('clubs').innerHTML = CLUBS.map((c) => `<a href="#" style="--c:${c.primary};--t:${textColour(c.primary)}">${badge(c)}${c.name}</a>`).join('')
+document.getElementById('jersey').innerHTML = jersey(CLUBS[8], 7)
+</script>
+</body>
+</html>

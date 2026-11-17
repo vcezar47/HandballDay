@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
+import { QRCodeSVG } from 'qrcode.react'
 import { Link } from 'react-router'
-import ClubBadge from './ClubBadge.jsx'
-import { formatDate, formatTime } from './format.js'
+import Court from './Court.jsx'
+import Ticket from './Ticket.jsx'
 
 const INTERVAL_MS = 5000
 const SWIPE_PX = 40
 
-// Carousel of upcoming matches: autoplay, pause button, arrows, dots, swipe and arrow keys.
+// Carousel of upcoming matches, one ticket per slide on a court: autoplay, pause button, arrows, dots, swipe and arrow keys.
 // Autoplay stops while hovered or focused, and never starts for people who ask for less motion.
 export default function Carousel({ fixtures }) {
   const count = fixtures.length
@@ -50,6 +51,7 @@ export default function Carousel({ fixtures }) {
       onFocus={() => setHovered(true)}
       onBlur={() => setHovered(false)}
     >
+      <Court />
       <div
         className="carousel-viewport"
         onPointerDown={(e) => setSwipeStart(e.clientX)}
@@ -70,21 +72,15 @@ export default function Carousel({ fixtures }) {
               aria-label={`${i + 1} of ${count}`}
               inert={i === index ? undefined : ''} // off-screen slides must not take focus
             >
-              <p className="slide-date">
-                {formatDate(f.kickoff_at)} &middot; {formatTime(f.kickoff_at)}
-              </p>
-              <div className="slide-teams">
-                <ClubBadge club={f.home} size={56} />
-                <span className="vs">vs</span>
-                <ClubBadge club={f.away} size={56} />
-              </div>
-              <h2>
-                {f.home.name} <span className="vs">vs</span> {f.away.name}
-              </h2>
-              <p className="muted">{f.venue}</p>
-              <Link className="pill" to={`/fixtures/${f.id}`}>
-                See tickets
-              </Link>
+              <Ticket fixture={f} details={[['Venue', f.venue]]}>
+                {/* the QR opens this match's page, so a phone camera works as a shortcut */}
+                <div className="qr">
+                  <QRCodeSVG value={`${window.location.origin}/fixtures/${f.id}`} size={96} marginSize={0} title="QR code for this match" />
+                </div>
+                <Link className="pill" to={`/fixtures/${f.id}`}>
+                  See tickets
+                </Link>
+              </Ticket>
             </article>
           ))}
         </div>

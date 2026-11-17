@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HandballDay – Option 3: Ticket</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--ground:#e9ecf0;--ink:#14161a;--muted:#5d6570;--red:#e3262f;--paper:#fff;--qr-bg:#fff}
+*{box-sizing:border-box;margin:0}
+body{font:400 18px/1.55 Archivo,system-ui,sans-serif;background:var(--ground);color:var(--ink)}
+a{color:inherit}
+.wrap{padding-inline:clamp(16px,3vw,40px);max-width:1440px;margin-inline:auto}
+header{display:flex;justify-content:space-between;align-items:center;padding-block:20px}
+.brand{font-weight:900;font-size:22px;text-decoration:none;letter-spacing:-.03em;display:flex;align-items:center;gap:10px}
+.brand i{width:34px;height:22px;background:var(--red);position:relative;-webkit-mask:radial-gradient(circle 5px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 5px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat;mask:radial-gradient(circle 5px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 5px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat}
+nav{display:flex;gap:26px;align-items:center;font-weight:500}
+nav a{text-decoration:none}
+nav .cta{background:var(--ink);color:#fff;padding:10px 20px;font-weight:700}
+.hero{display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(24px,4vw,70px);align-items:center;padding-block:48px 70px}
+.hero>*{min-width:0}
+h1{font-size:clamp(46px,6.2vw,92px);line-height:.92;letter-spacing:-.045em;font-weight:900}
+h1 span{color:var(--red)}
+.hero p{margin:22px 0 28px;max-width:40ch;font-size:20px;color:var(--muted)}
+.btn{display:inline-block;background:var(--red);color:#fff;padding:15px 30px;font-weight:800;text-decoration:none}
+.btn.alt{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink);margin-left:10px}
+/* ticket carousel */
+.cv:focus-visible{outline:3px solid var(--red);outline-offset:6px}
+.cv-viewport{overflow:hidden;padding:10px 0}
+.cv-track{display:flex;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.cv-slide{flex:0 0 100%;padding-inline:6px}
+.ticket{display:grid;grid-template-columns:1fr 170px;background:var(--paper);filter:drop-shadow(0 12px 18px #14161a22);
+  -webkit-mask:radial-gradient(circle 15px at calc(100% - 170px) 0,#0000 98%,#000) top/100% 51% no-repeat,radial-gradient(circle 15px at calc(100% - 170px) 100%,#0000 98%,#000) bottom/100% 51% no-repeat;
+  mask:radial-gradient(circle 15px at calc(100% - 170px) 0,#0000 98%,#000) top/100% 51% no-repeat,radial-gradient(circle 15px at calc(100% - 170px) 100%,#0000 98%,#000) bottom/100% 51% no-repeat}
+.main{padding:0 0 26px;display:grid;gap:18px}
+.band{height:16px;display:grid;grid-template-columns:1fr 1fr}
+.main>*:not(.band){padding-inline:30px}
+.kick{display:flex;justify-content:space-between;align-items:baseline;font-weight:800}
+.kick b{font-size:44px;line-height:1;letter-spacing:-.04em}
+.kick span{color:var(--muted);font-weight:500;font-size:16px}
+.teams{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;align-items:center;font-weight:800;font-size:clamp(22px,2.3vw,32px);line-height:1.05;letter-spacing:-.02em}
+.teams .badge{width:50px;height:50px}
+.meta{display:flex;gap:28px;font-size:15px;color:var(--muted)}
+.meta b{display:block;color:var(--ink);font-size:17px}
+.stub{border-left:3px dotted #c7cdd5;display:grid;justify-items:center;align-content:center;gap:10px;padding:20px;text-align:center;color:var(--ink)}
+.stub .qr{width:110px;height:110px}
+.stub small{color:var(--muted);font-size:13px;line-height:1.3}
+.stub a{background:var(--ink);color:#fff;padding:8px 14px;font-weight:700;font-size:14px;text-decoration:none}
+.cv-controls{display:flex;gap:10px;align-items:center;padding:14px 6px}
+.cv-btn{font:700 15px Archivo;background:transparent;color:var(--ink);border:2px solid var(--ink);min-width:40px;height:40px;padding-inline:14px;cursor:pointer}
+.cv-btn:hover{background:var(--ink);color:#fff}
+.cv-dots{display:flex;gap:8px;margin-inline:auto 6px}
+.cv-dot{width:26px;height:6px;border:0;background:#b9c0c9;cursor:pointer;padding:0}
+.cv-dot.active{background:var(--red)}
+section{padding-block:70px}
+h2{font-size:clamp(32px,4.2vw,60px);letter-spacing:-.04em;line-height:.95;font-weight:900;margin-bottom:26px}
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:var(--ink);color:#fff}
+.how div{padding:40px 36px;border-right:3px dotted #4a5159}
+.how div:last-child{border:0}
+.how b{display:block;font-size:30px;font-weight:900;letter-spacing:-.03em;margin-bottom:8px;color:#fff}
+.how p{color:#c4cad2;max-width:30ch}
+.how div:nth-child(2) b{color:var(--red)}
+.chips{display:flex;flex-wrap:wrap;gap:12px}
+.chip{display:flex;align-items:center;gap:12px;background:#fff;padding:10px 20px 10px 10px;text-decoration:none;font-weight:700;font-size:16px;line-height:1.15;transition:transform .2s}
+.chip small{display:block;color:var(--muted);font-weight:400}
+.chip:hover{transform:translateY(-3px)}
+.chip .badge{width:42px;height:42px}
+.addon{display:grid;grid-template-columns:auto 1fr auto;gap:40px;align-items:center;background:var(--red);color:#fff;padding:40px clamp(20px,4vw,56px)}
+.addon .jersey{width:150px}
+.addon h2{margin:0 0 8px}
+.addon p{max-width:44ch;font-size:19px}
+.addon a{background:#fff;color:var(--ink);padding:15px 28px;font-weight:800;text-decoration:none;white-space:nowrap}
+footer{background:var(--ink);color:#c4cad2;padding-block:34px;font-size:15px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+@media(max-width:900px){
+ .hero{grid-template-columns:1fr;padding-block:20px 40px}
+ .ticket{grid-template-columns:1fr 112px;-webkit-mask:none;mask:none}
+ .stub{padding:12px}.stub .qr{width:80px;height:80px}.kick b{font-size:34px}.meta{flex-wrap:wrap;gap:14px}
+ .how{grid-template-columns:1fr}.how div{border-right:0;border-bottom:3px dotted #4a5159}
+ .addon{grid-template-columns:1fr}
+ nav a:not(.cta){display:none}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="brand" href="#"><i></i>HandballDay</a>
+  <nav aria-label="Main"><a href="#">Clubs</a><a href="#">Fixtures</a><a href="#">My tickets</a><a class="cta" href="#">Log in</a></nav>
+</header>
+<main>
+<div class="hero">
+  <div>
+    <h1>Your ticket to <span>Liga Florilor.</span></h1>
+    <p>Choose a match and a stand, pay once, and your QR ticket is waiting in your account. Staff scan it at the door.</p>
+    <a class="btn" href="#">Browse fixtures</a><a class="btn alt" href="#">Design a jersey</a>
+  </div>
+  <div id="carousel"></div>
+</div>
+
+<section style="padding-top:0">
+  <div class="how">
+    <div><b>Pick</b><p>Any home game of the 14 clubs, with the seats left in every stand.</p></div>
+    <div><b>Pay</b><p>One checkout through Stripe for your tickets and your jersey.</p></div>
+    <div><b>Scan</b><p>Show the QR at the hall. A used ticket is rejected, so nobody gets in twice.</p></div>
+  </div>
+</section>
+
+<section aria-labelledby="c-h" style="padding-top:20px">
+  <h2 id="c-h">Pick your club.</h2>
+  <div class="chips" id="clubs"></div>
+</section>
+
+<section style="padding-top:0">
+  <div class="addon">
+    <div id="jersey"></div>
+    <div><h2>Add a jersey.</h2><p>Your name, your number, your club's colours. Preview it live and collect it at the match you're attending.</p></div>
+    <a href="#">Open the studio</a>
+  </div>
+</section>
+</main>
+</div>
+<footer><div class="wrap"><p>© HandballDay · Liga Florilor 2026/27</p><p>Unofficial student project. Payments run in Stripe test mode and no real tickets are sold.</p></div></footer>
+
+<script src="shared.js"></script>
+<script>
+carousel(document.getElementById('carousel'), { render: (f, k) => `
+  <div class="ticket">
+    <div class="main">
+      <div class="band"><span style="background:${f.home.primary}"></span><span style="background:${f.away.primary}"></span></div>
+      <div class="kick"><b>${f.date}</b><span>Kick-off ${f.time}</span></div>
+      <div class="teams">${badge(f.home)}<span>${f.home.name}</span>${badge(f.away)}<span>${f.away.name}</span></div>
+      <div class="meta"><div><b>${f.venue}</b>Venue</div><div><b>Main stand</b>Zone</div><div><b>from 25 lei</b>Price</div></div>
+    </div>
+    <div class="stub">${qr(k + 3, 110)}<small>Scan at the door</small><a href="#">See tickets</a></div>
+  </div>` })
+document.getElementById('clubs').innerHTML = CLUBS.map((c) => `<a class="chip" href="#">${badge(c)}<span>${c.name}<small>${c.city}</small></span></a>`).join('')
+document.getElementById('jersey').innerHTML = jersey(CLUBS[8], 10)
+</script>
+</body>
+</html>

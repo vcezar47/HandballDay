@@ -1,40 +1,19 @@
-/* Page structure: background canvas, stage, home column, auth card. */
-
-.flow {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 0;
-  pointer-events: none;
-}
-
-/* soft vignette keeps the edges dark and the centre readable */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background: radial-gradient(ellipse at center, transparent 30%, rgb(5 5 13 / 0.75) 100%);
-}
+/* Page structure: stage, header, footer, content column, grids. */
 
 .stage {
-  position: relative;
-  z-index: 1;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* one page at a time; home and auth sit in the middle, content pages start at the top */
+/* one page at a time, in one centred column with the same gutter as the header */
 .page {
   flex: 1;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr); /* without this the column grows to its widest content and overflows phones */
-  place-items: center;
-  padding: 16px;
-  animation: rise 0.7s ease both;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 8px 16px 56px;
+  animation: rise 0.6s ease both;
 }
 
 .site-header {
@@ -43,53 +22,53 @@ body::after {
   align-items: center;
   justify-content: space-between;
   gap: 8px 24px;
-  padding: 14px 20px;
-  border-bottom: 1px solid var(--border);
-  background: var(--glass);
-  backdrop-filter: blur(12px);
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 16px;
 }
 
 .site-header nav {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 4px 20px;
+  gap: 6px 22px;
 }
 
 .site-footer {
-  padding: 22px 20px 28px;
-  border-top: 1px solid var(--border);
-  color: var(--muted);
-  font-size: 0.8rem;
-  text-align: center;
+  margin-top: auto;
+  padding: 34px 16px;
+  background: var(--text);
+  color: #c5d0e0;
+  font-size: 0.9rem;
 }
 
-.site-footer p {
-  margin: 4px 0;
-}
-
-.home {
-  width: 100%;
-  max-width: 760px;
-  padding: 24px 0;
-  text-align: center;
-}
-
-.content {
-  align-self: start;
-  width: 100%;
-  max-width: 1000px;
+.site-footer > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 24px;
+  max-width: 1408px;
   margin: 0 auto;
 }
 
-/* club grid: as many 240px columns as fit */
-.grid {
+.site-footer p {
+  margin: 0;
+}
+
+.site-footer a {
+  color: #fff;
+}
+
+.content {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding-top: 24px;
+}
+
+.content.centered {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 14px;
-  padding: 0;
-  margin: 20px 0 0;
-  list-style: none;
+  justify-items: center;
 }
 
 .club-head {
@@ -133,13 +112,21 @@ body::after {
   max-width: 280px;
 }
 
-/* tablet and up: roomier header and pages */
 @media (min-width: 600px) {
+  .page,
   .site-header {
-    padding: 14px 32px;
+    padding-inline: 32px;
   }
-  .page {
-    padding: 32px;
+  .site-footer {
+    padding-inline: 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .page,
+  .site-header,
+  .site-footer {
+    padding-inline: 40px;
   }
 }
 
@@ -156,20 +143,4 @@ body::after {
     flex-basis: 100%;
     max-width: none;
   }
-}
-
-@media (min-width: 1024px) {
-  .page {
-    padding: 40px 48px;
-  }
-}
-.card {
-  width: 100%;
-  max-width: 390px;
-  padding: 30px 28px 32px;
-  background: var(--glass);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  backdrop-filter: blur(18px);
-  box-shadow: 0 20px 60px rgb(0 0 0 / 0.5);
 }

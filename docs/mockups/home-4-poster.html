@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HandballDay – Option 4: Poster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ground:#fff;--ink:#0a0a0a;--muted:#5b5b5b;--soft:#f0f0ee;--hero-h:#91232b;--hero-a:#fceb0c}
+*{box-sizing:border-box;margin:0}
+body{font:400 18px/1.55 Inter,system-ui,sans-serif;background:var(--ground);color:var(--ink)}
+a{color:inherit}
+.wrap{padding-inline:clamp(16px,3vw,40px);max-width:1600px;margin-inline:auto}
+header{display:flex;justify-content:space-between;align-items:center;padding-block:18px}
+.brand{font:900 30px 'Big Shoulders Display';text-decoration:none;text-transform:uppercase;letter-spacing:.01em}
+nav{display:flex;gap:26px;align-items:center;font-weight:500;font-size:16px}
+nav a{text-decoration:none}
+nav .cta{background:var(--ink);color:#fff;padding:9px 18px;font-weight:600}
+.top{display:flex;justify-content:space-between;align-items:end;gap:30px;flex-wrap:wrap;padding-block:20px 26px}
+h1{font:900 clamp(44px,6.4vw,96px)/.88 'Big Shoulders Display';text-transform:uppercase;letter-spacing:-.005em;max-width:12ch}
+.top p{max-width:38ch;color:var(--muted);font-size:19px}
+.top .btns{display:flex;gap:10px;margin-top:16px}
+.btn{background:var(--ink);color:#fff;padding:13px 26px;font-weight:600;text-decoration:none}
+.btn.alt{background:var(--soft);color:var(--ink)}
+/* the poster: two flat colour fields that follow the match */
+.cv{position:relative;background:var(--ground)}
+.cv:focus-visible{outline:3px solid var(--ink);outline-offset:4px}
+.cv-viewport{overflow:hidden}
+.cv-track{display:flex}
+.cv-slide{flex:0 0 100%;display:grid;grid-template-columns:1.25fr 1fr;min-height:clamp(420px,46vw,640px);opacity:0;transition:opacity .5s}
+.cv-slide:not([inert]){opacity:1}
+.field{position:relative;padding:clamp(20px,3vw,44px);display:flex;flex-direction:column;justify-content:space-between;transition:background .6s,color .6s}
+.field.h{background:var(--c);color:var(--t)}
+.field.a{background:var(--c);color:var(--t)}
+.field .tag{font-weight:600;font-size:16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.field .badge{width:64px;height:64px;box-shadow:0 0 0 4px var(--t)}
+.field h2{font:900 clamp(54px,10.5vw,176px)/.82 'Big Shoulders Display';text-transform:uppercase;letter-spacing:-.01em;overflow-wrap:anywhere}
+.field.a h2{font-size:clamp(40px,7.4vw,124px)}
+.info{display:flex;justify-content:space-between;align-items:end;gap:14px;flex-wrap:wrap;font-weight:600;font-size:18px;margin-top:30px}
+.info .when{font:800 clamp(28px,3.4vw,48px)/1 'Big Shoulders Display';text-transform:uppercase}
+.info a{background:var(--t);color:var(--c);padding:12px 24px;text-decoration:none;font-weight:700}
+.vs{position:absolute;left:0;top:50%;transform:translate(-50%,-50%);z-index:2;background:var(--ink);color:#fff;width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font:900 24px 'Big Shoulders Display';text-transform:uppercase}
+.cv-controls{display:flex;align-items:center;gap:10px;padding:14px 0;justify-content:space-between}
+.cv-btn{font:600 15px Inter;background:var(--soft);color:var(--ink);border:0;min-width:42px;height:42px;padding-inline:16px;cursor:pointer}
+.cv-btn:hover{background:var(--ink);color:#fff}
+.cv-dots{display:flex;gap:8px;order:-1}
+.cv-dot{width:42px;height:6px;border:0;background:#d4d4d0;cursor:pointer;padding:0}
+.cv-dot.active{background:var(--ink)}
+.cv-controls .grp{display:flex;gap:8px}
+section{padding-block:80px 0}
+h3{font:900 clamp(40px,6vw,92px)/.88 'Big Shoulders Display';text-transform:uppercase;margin-bottom:28px}
+.clubs{display:grid;grid-template-columns:repeat(7,1fr);gap:0}
+.clubs a{aspect-ratio:1/1;display:flex;flex-direction:column;justify-content:space-between;padding:16px;text-decoration:none;background:var(--c);color:var(--t);font:800 clamp(18px,1.8vw,26px)/1 'Big Shoulders Display';text-transform:uppercase;transition:transform .2s;position:relative}
+.clubs a:hover{transform:scale(1.04);z-index:2}
+.clubs .badge{width:44px;height:44px}
+.jerseyrow{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.jerseyrow>div{padding:clamp(24px,4vw,56px);min-height:360px}
+.jerseyrow .l{background:var(--ink);color:#fff;display:flex;flex-direction:column;justify-content:space-between;gap:20px}
+.jerseyrow .l p{max-width:34ch;color:#cfcfcb;font-size:19px}
+.jerseyrow .l a{background:#fff;color:var(--ink);padding:13px 26px;font-weight:600;text-decoration:none;align-self:flex-start}
+.jerseyrow .r{background:var(--hero-h);display:grid;place-items:center;transition:background .6s}
+.jerseyrow .jersey{width:min(260px,60%)}.jersey path{stroke:#0a0a0a;stroke-width:1.2;stroke-linejoin:round}
+footer{margin-top:80px;background:var(--ink);color:#bdbdb8;padding-block:30px;font-size:15px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+@media(max-width:900px){
+ .cv-slide{grid-template-columns:1fr}
+ .vs{left:50%;top:0}
+ .cv-dot{width:22px}.cv-controls{gap:6px}
+ .field.h{min-height:300px}.field.a{min-height:210px}
+ .clubs{grid-template-columns:repeat(3,minmax(0,1fr))}.clubs a{font-size:17px;overflow-wrap:anywhere;padding:12px}
+ .jerseyrow{grid-template-columns:1fr}
+ nav a:not(.cta){display:none}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="brand" href="#">HandballDay</a>
+  <nav aria-label="Main"><a href="#">Clubs</a><a href="#">Fixtures</a><a href="#">My tickets</a><a class="cta" href="#">Log in</a></nav>
+</header>
+<main>
+<div class="top">
+  <h1>Matchday starts here.</h1>
+  <div><p>Tickets for every Liga Florilor home game. Pick your stand, pay once, walk in with a QR code.</p>
+  <div class="btns"><a class="btn" href="#">Browse fixtures</a><a class="btn alt" href="#">Design a jersey</a></div></div>
+</div>
+<div id="carousel"></div>
+
+<section aria-labelledby="c-h">
+  <h3 id="c-h">14 clubs.<br>14 colours.</h3>
+  <div class="clubs" id="clubs"></div>
+</section>
+
+<section>
+  <div class="jerseyrow">
+    <div class="l"><h3 style="margin:0">Wear<br>the number.</h3><div><p style="margin-bottom:18px">Design a jersey in your club's colours, preview it live, and collect it at the hall.</p><a href="#">Open the studio</a></div></div>
+    <div class="r" id="jersey"></div>
+  </div>
+</section>
+</main>
+</div>
+<footer><div class="wrap"><p>© HandballDay · Liga Florilor 2026/27</p><p>Unofficial student project. Payments run in Stripe test mode and no real tickets are sold.</p></div></footer>
+
+<script src="shared.js"></script>
+<script>
+const field = (c, role, f) => `style="--c:${c.primary};--t:${textColour(c.primary)}"`
+const j = document.getElementById('jersey')
+carousel(document.getElementById('carousel'), {
+  render: (f) => `
+  <div class="field h" ${field(f.home)}>
+    <div class="tag"><span>Home · ${f.venue}</span>${badge(f.home)}</div>
+    <div><h2>${f.home.name}</h2>
+    <div class="info"><span class="when">${f.date} · ${f.time}</span><a href="#">See tickets</a></div></div>
+  </div>
+  <div class="field a" ${field(f.away)}>
+    <div class="tag"><span>Away</span>${badge(f.away)}</div>
+    <h2>${f.away.name}</h2>
+    <span class="vs">vs</span>
+  </div>`,
+  onChange: (i, f) => { j.style.background = f.away.primary; j.innerHTML = jersey(f.home, 9) }
+})
+document.getElementById('clubs').innerHTML = CLUBS.map((c) => `<a href="#" style="--c:${c.primary};--t:${textColour(c.primary)}">${badge(c)}${c.name}</a>`).join('')
+</script>
+</body>
+</html>

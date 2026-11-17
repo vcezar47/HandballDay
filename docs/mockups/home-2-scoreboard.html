@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HandballDay – Option 2: Scoreboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Teko:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ground:#0d0f11;--panel:#16191c;--ink:#f2f2ee;--muted:#9aa0a6;--led:#ffb81c;--red:#ff3b30;--dot:#ffffff14}
+*{box-sizing:border-box;margin:0}
+body{font:500 19px/1.5 'Barlow Condensed',system-ui,sans-serif;background:var(--ground);color:var(--ink)}
+a{color:inherit}
+.wrap{padding-inline:clamp(16px,3vw,40px);max-width:1440px;margin-inline:auto}
+header{display:flex;justify-content:space-between;align-items:center;padding-block:18px;font-size:20px}
+.brand{font-weight:800;font-size:28px;text-decoration:none;letter-spacing:.02em;text-transform:uppercase}
+.brand span{color:var(--led)}
+nav{display:flex;gap:28px;align-items:center;font-weight:600}
+nav a{text-decoration:none}
+nav .cta{background:var(--led);color:#111;padding:6px 20px;font-weight:700}
+.intro{display:flex;justify-content:space-between;align-items:end;gap:30px;padding-block:44px 28px;flex-wrap:wrap}
+h1{font-size:clamp(46px,7.4vw,112px);line-height:.9;font-weight:800;text-transform:uppercase;letter-spacing:-.005em}
+h1 span{color:var(--led)}
+.intro p{max-width:34ch;color:var(--muted);font-size:22px}
+/* scoreboard carousel: LED dot texture */
+.cv{background:var(--panel);border:6px solid #23272b;position:relative}
+.cv:focus-visible{outline:3px solid var(--led);outline-offset:4px}
+.cv-viewport{overflow:hidden}
+.cv-track{display:flex;transition:transform .5s steps(8)}
+.cv-slide{flex:0 0 100%;display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-items:center;padding:34px clamp(16px,4vw,56px);background-image:radial-gradient(var(--dot) 1.6px,transparent 2px);background-size:8px 8px}
+.side{display:grid;gap:12px;justify-items:center;text-align:center}
+.side .badge{width:clamp(70px,9vw,130px);height:auto}
+.side h2{font-size:clamp(26px,3.4vw,50px);line-height:1;text-transform:uppercase;font-weight:700}
+.side small{color:var(--muted);font-size:18px;text-transform:uppercase;letter-spacing:.08em}
+.mid{display:grid;gap:6px;justify-items:center;text-align:center}
+.mid .led{font:600 clamp(70px,10vw,150px)/.9 Teko,sans-serif;color:var(--led);letter-spacing:.02em}
+.mid .when{font-size:24px;text-transform:uppercase;font-weight:700;letter-spacing:.06em}
+.mid .venue{color:var(--muted);font-size:18px}
+.mid a{margin-top:10px;background:var(--led);color:#111;font-weight:800;font-size:22px;padding:6px 26px;text-decoration:none;text-transform:uppercase}
+.clock{display:flex;gap:10px;font:600 28px/1 Teko;color:var(--red)}
+.cv-controls{display:flex;justify-content:center;gap:10px;align-items:center;padding:12px;background:#0d0f11}
+.cv-btn{font:700 17px 'Barlow Condensed';background:#23272b;color:var(--ink);border:0;min-width:38px;height:36px;padding-inline:14px;cursor:pointer;text-transform:uppercase}
+.cv-btn:hover{background:var(--led);color:#111}
+.cv-dots{display:flex;gap:6px}
+.cv-dot{width:22px;height:8px;background:#2c3136;border:0;cursor:pointer;padding:0}
+.cv-dot.active{background:var(--led)}
+section{padding-block:80px 0}
+h3.t{font-size:clamp(34px,4.4vw,64px);text-transform:uppercase;font-weight:800;line-height:.95;margin-bottom:24px}
+.table{display:grid}
+.row{display:grid;grid-template-columns:130px 1fr auto 1fr 220px auto;gap:16px;align-items:center;padding:16px 20px;background:var(--panel);margin-bottom:4px;font-size:22px;font-weight:700;text-transform:uppercase}
+.row:nth-child(even){background:#1b1f23}
+.row .d{font:600 30px Teko;color:var(--led);line-height:1}
+.row .h,.row .a{display:flex;align-items:center;gap:12px}
+.row .a{justify-content:flex-start}
+.row .badge{width:36px;height:36px}
+.row .v{color:var(--muted);font-size:17px;font-weight:500}
+.row .go{background:#23272b;padding:6px 14px;text-align:center;text-decoration:none;font-size:18px}
+.row .go:hover{background:var(--led);color:#111}
+.club-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.club-strip a{background:var(--panel);padding:20px 8px;display:grid;justify-items:center;gap:8px;text-align:center;text-decoration:none;font-size:17px;line-height:1.1;text-transform:uppercase;font-weight:600;background-image:radial-gradient(var(--dot) 1.2px,transparent 1.6px);background-size:6px 6px}
+.club-strip a:hover{outline:2px solid var(--led)}
+.club-strip .badge{width:52px;height:52px}
+.jerseyband{display:grid;grid-template-columns:1fr auto;gap:30px;align-items:center;background:var(--led);color:#111;padding:40px clamp(20px,4vw,60px)}
+.jerseyband h3{font-size:clamp(34px,5vw,72px);text-transform:uppercase;font-weight:800;line-height:.92}
+.jerseyband p{font-size:22px;margin:12px 0 18px;max-width:40ch}
+.jerseyband a{background:#111;color:var(--led);padding:8px 26px;font-weight:800;font-size:22px;text-decoration:none;text-transform:uppercase}
+.jerseyband .jersey{width:clamp(120px,16vw,230px)}
+footer{margin-top:80px;padding-block:32px;color:var(--muted);font-size:17px;background:#08090a}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+@media(max-width:900px){
+ .cv-slide{grid-template-columns:1fr 1fr;grid-template-areas:"h a" "m m"}
+ .cv-slide .side:nth-child(1){grid-area:h}.cv-slide .side:nth-child(3){grid-area:a}.cv-slide .mid{grid-area:m}
+ .row{grid-template-columns:1fr auto;grid-template-areas:"d g" "h h" "a a"}
+ .row .d{grid-area:d}.row .go{grid-area:g}.row .h{grid-area:h}.row .a{grid-area:a}.row .v,.row .vs{display:none}
+ .club-strip{grid-template-columns:repeat(3,1fr)}
+ .jerseyband{grid-template-columns:1fr}
+ nav a:not(.cta){display:none}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="brand" href="#">Handball<span>Day</span></a>
+  <nav aria-label="Main"><a href="#">Clubs</a><a href="#">Fixtures</a><a href="#">My tickets</a><a class="cta" href="#">Log in</a></nav>
+</header>
+<main>
+<div class="intro">
+  <h1>Liga Florilor.<br><span>Be in the hall.</span></h1>
+  <p>Tickets for every home game of the 14 clubs. Pick a stand, pay once, walk in with a QR code.</p>
+</div>
+<div id="carousel"></div>
+
+<section aria-labelledby="f-h">
+  <h3 class="t" id="f-h">Next fixtures</h3>
+  <div class="table" id="table"></div>
+</section>
+
+<section aria-labelledby="c-h">
+  <h3 class="t" id="c-h">The 14 clubs</h3>
+  <div class="club-strip" id="clubs"></div>
+</section>
+
+<section>
+  <div class="jerseyband">
+    <div><h3>Your name.<br>Your number.</h3><p>Design a jersey in your club's colours, preview it live and add it to the same checkout.</p><a href="#">Open the jersey studio</a></div>
+    <div id="jersey"></div>
+  </div>
+</section>
+</main>
+</div>
+<footer><div class="wrap"><p>© HandballDay · Liga Florilor 2026/27</p><p>Unofficial student project. Payments run in Stripe test mode and no real tickets are sold.</p></div></footer>
+
+<script src="shared.js"></script>
+<script>
+carousel(document.getElementById('carousel'), { render: (f) => `
+  <div class="side">${badge(f.home)}<h2>${f.home.name}</h2><small>Home</small></div>
+  <div class="mid"><div class="when">${f.date}</div><div class="led">${f.time}</div><div class="venue">${f.venue}</div><a href="#">See tickets</a></div>
+  <div class="side">${badge(f.away)}<h2>${f.away.name}</h2><small>Away</small></div>` })
+document.getElementById('table').innerHTML = FIXTURES.map((f) => `
+  <div class="row"><div class="d">${f.date}<br><span style="font-size:20px;color:#fff">${f.time}</span></div>
+  <div class="h">${badge(f.home)}${f.home.name}</div><div class="vs" style="color:var(--muted)">vs</div>
+  <div class="a">${badge(f.away)}${f.away.name}</div><div class="v">${f.venue}</div><a class="go" href="#">Tickets</a></div>`).join('')
+document.getElementById('clubs').innerHTML = CLUBS.map((c) => `<a href="#">${badge(c)}${c.name}</a>`).join('')
+document.getElementById('jersey').innerHTML = jersey(CLUBS[6], 9)
+</script>
+</body>
+</html>
