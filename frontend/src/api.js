@@ -47,8 +47,8 @@ export const login = (email, password, captchaToken) =>
 export const logout = () => request('POST', '/auth/logout')
 export const me = () => request('GET', '/auth/me')
 
-export const checkout = (fixtureId, zoneId, quantity, jersey) =>
-  request('POST', '/checkout', { fixture_id: fixtureId, zone_id: zoneId, quantity, jersey })
+export const checkout = (fixtureId, zoneId, seats, jersey) =>
+  request('POST', '/checkout', { fixture_id: fixtureId, zone_id: zoneId, seats, jersey })
 export const getJerseyCatalog = () => request('GET', '/jersey-templates')
 export const getJerseys = () => request('GET', '/jerseys')
 export const uploadLogo = (file, captchaToken) =>
@@ -79,6 +79,7 @@ export const scanTicket = (code) => request('POST', '/staff/scan', { code })
 export const getClubs = () => request('GET', '/clubs')
 export const getClub = (slug) => request('GET', `/clubs/${encodeURIComponent(slug)}`)
 export const getFixture = (id) => request('GET', `/fixtures/${encodeURIComponent(id)}`)
+export const getSeatMap = (id) => request('GET', `/fixtures/${encodeURIComponent(id)}/seats`)
 // params: { club, date_from, date_to, limit }; empty values are left out
 export const getFixtures = (params = {}) => {
   const query = new URLSearchParams(Object.entries(params).filter(([, v]) => v)).toString()

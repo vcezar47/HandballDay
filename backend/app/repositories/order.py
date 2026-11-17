@@ -35,6 +35,11 @@ class TicketRepository(SqlRepository[Ticket]):
         q = select(func.count(Ticket.id)).select_from(Ticket).join(Order, taken_seats(now))
         return self.db.scalar(q.where(Ticket.fixture_id == fixture_id, Ticket.zone_id == zone_id))
 
+    def taken_seat_codes(self, fixture_id: int, now: datetime) -> set[str]:
+        """Codes of the seats of one fixture that are paid or held by an open checkout."""
+        q = select(Ticket.seat).join(Order, taken_seats(now)).where(Ticket.fixture_id == fixture_id, Ticket.seat.is_not(None))
+        return set(self.db.scalars(q))
+
     def for_order(self, order_id: int) -> list[Ticket]:
         return list(self.db.scalars(select(Ticket).where(Ticket.order_id == order_id)))
 

@@ -62,6 +62,7 @@ class Ticket(IdMixin, Base):
     order_id: Mapped[int] = mapped_column(ForeignKey("orders.id"), index=True)
     fixture_id: Mapped[int] = mapped_column(index=True)
     zone_id: Mapped[int]
+    seat: Mapped[str | None] = mapped_column(String(16))  # e.g. "M2-5-12" (see arena.py); empty for tickets bought without a seat
     code: Mapped[str] = mapped_column(String(64), unique=True)  # random token, rendered as QR
     price_bani: Mapped[int]  # snapshot: must not change when the fixture is repriced
     status: Mapped[TicketStatus] = mapped_column(_enum(TicketStatus), default=TicketStatus.VALID)

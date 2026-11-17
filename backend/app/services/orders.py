@@ -4,8 +4,9 @@ from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import Session
 
 from ..activity import log_activity
+from ..arena import build_layout, find_sector
 from ..config import get_config
-from ..errors import ConflictError, NotFoundError, PaymentError
+from ..errors import AppValidationError, ConflictError, NotFoundError, PaymentError
 from ..gateways import Line, PaymentGateway
 from ..models import (
     FixtureStatus, JerseyDesign, JerseyItem, Order, OrderStatus, Payment, PaymentStatus, Ticket, TicketStatus,
@@ -50,7 +51,7 @@ class OrderService:
         if fixture.status != FixtureStatus.SCHEDULED or fixture.kickoff_at <= now:
             raise ConflictError("Tickets for this match are no longer on sale")
 
-        jersey_club = self._check_jersey(user, req)  # before the lock: do not hold seats while validating
+        jersey_club = self._check_jersey(user, req, fixture)  # before the lock: do not hold seats while validating
 
         # The row lock makes "count the seats, then take them" one step: two buyers of the last seat queue up here.
         sale = self.fixtures.lock_zone(req.fixture_id, req.zone_id)
@@ -60,16 +61,19 @@ class OrderService:
         if left < req.quantity:
             raise ConflictError("Sold out" if left <= 0 else f"Only {left} seats left in this zone")
 
+        seats = self._check_seats(fixture, req, now)  # inside the lock: nobody can take them between the check and the insert
+
         order = self.orders.add(Order(user_id=user.id))
-        for _ in range(req.quantity):
+        for seat in seats:
             self.tickets.add(Ticket(
-                order_id=order.id, fixture_id=req.fixture_id, zone_id=req.zone_id,
+                order_id=order.id, fixture_id=req.fixture_id, zone_id=req.zone_id, seat=seat,
                 code=secrets.token_urlsafe(24), price_bani=sale.price_bani, status=TicketStatus.PENDING,
             ))
         # Read everything needed after the commit now: commit expires the loaded objects.
         order_id, price, amount = order.id, sale.price_bani, sale.price_bani * req.quantity
         match = f"{fixture.home_club.name} vs {fixture.away_club.name}"
-        lines = [Line(f"{match}, {self.db.get(Zone, req.zone_id).name}", price, req.quantity)]
+        seat_note = f" (seats {', '.join(seats)})" if req.seats else ""
+        lines = [Line(f"{match}, {self.db.get(Zone, req.zone_id).name}{seat_note}", price, req.quantity)]
         if req.jersey:
             j = req.jersey
             design = self.jerseys.add_design(JerseyDesign(
@@ -97,7 +101,24 @@ class OrderService:
         log_activity("checkout_started", user_id=user.id, order_id=order_id, amount_bani=amount)
         return session.url
 
-    def _check_jersey(self, user: User, req: CheckoutRequest):
+    def _check_seats(self, fixture, req: CheckoutRequest, now: datetime) -> list[str | None]:
+        """The seat of each ticket: the chosen codes after checking them, or None for a ticket without a seat."""
+        if req.seats is None:
+            return [None] * req.quantity
+        zones = {z.name: z for z in self.fixtures.venue_zones(fixture.venue_id)}
+        layout = build_layout({name: z.capacity for name, z in zones.items()})
+        for code in req.seats:
+            found = find_sector(layout, code)
+            if found is None:
+                raise AppValidationError(f"There is no seat {code}")
+            if zones[found[0].zone].id != req.zone_id:
+                raise AppValidationError("All seats must be in the zone you are buying")
+        taken = self.tickets.taken_seat_codes(fixture.id, now) & set(req.seats)
+        if taken:
+            raise ConflictError(f"Seat {sorted(taken)[0]} was just taken, please pick another")
+        return list(req.seats)
+
+    def _check_jersey(self, user: User, req: CheckoutRequest, fixture):
         """Look up what the jersey refers to; returns its club, or None when there is no jersey."""
         j = req.jersey
         if j is None:
@@ -105,6 +126,8 @@ class OrderService:
         club = self.clubs.get_by_slug(j.club)
         if club is None:
             raise NotFoundError("Jersey club not found")
+        if club.id != fixture.home_club_id:
+            raise AppValidationError("Only the home team's jersey is on sale for this match")
         if self.templates.get(j.template_id) is None:
             raise NotFoundError("Jersey template not found")
         if j.logo_upload_id is not None:
@@ -150,7 +173,7 @@ class OrderService:
     def my_tickets(self, user: User) -> list[TicketOut]:
         return [
             TicketOut(
-                id=t.id, code=t.code, status=t.status, price_bani=t.price_bani, zone=zone,
+                id=t.id, code=t.code, status=t.status, price_bani=t.price_bani, zone=zone, seat=t.seat,
                 fixture=FixtureOut.model_validate(f), used_at=t.used_at,
             )
             for t, f, zone in self.tickets.paid_for_user(user.id)

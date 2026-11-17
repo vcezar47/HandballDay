@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import AwareDatetime, BaseModel, Field
+from pydantic import AwareDatetime, BaseModel, Field, model_validator
 
 from ..models import FixtureStatus
 from .catalog import FixtureOut
@@ -12,8 +12,21 @@ MAX_TICKETS_PER_ORDER = 6
 class CheckoutRequest(BaseModel):
     fixture_id: int
     zone_id: int
-    quantity: int = Field(ge=1, le=MAX_TICKETS_PER_ORDER)
+    quantity: int | None = Field(None, ge=1, le=MAX_TICKETS_PER_ORDER)  # implied by `seats` when seats are chosen
+    seats: list[str] | None = Field(None, min_length=1, max_length=MAX_TICKETS_PER_ORDER)  # seat codes, all in `zone_id`
     jersey: JerseyRequest | None = None  # one optional jersey, picked up at this match
+
+    @model_validator(mode="after")
+    def _count(self):
+        if self.seats is not None:
+            if len(set(self.seats)) != len(self.seats):
+                raise ValueError("A seat can only be listed once")
+            if self.quantity not in (None, len(self.seats)):
+                raise ValueError("quantity does not match the seats")
+            self.quantity = len(self.seats)
+        elif self.quantity is None:
+            raise ValueError("Choose seats or a quantity")
+        return self
 
 
 class CheckoutResponse(BaseModel):
@@ -26,6 +39,7 @@ class TicketOut(BaseModel):
     status: str
     price_bani: int
     zone: str
+    seat: str | None = None
     fixture: FixtureOut
     used_at: datetime | None = None
 
@@ -36,6 +50,7 @@ class ScanRequest(BaseModel):
 
 class ScanOut(BaseModel):
     zone: str
+    seat: str | None = None
     fixture: FixtureOut
     used_at: datetime
 

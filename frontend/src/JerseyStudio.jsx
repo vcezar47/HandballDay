@@ -13,7 +13,8 @@ const NAME_JUNK = /[^\p{L} .'-]/gu // anything the server would refuse
 export default function JerseyStudio({ homeSlug, onChange }) {
   const { data: catalog, error } = useFetch(getJerseyCatalog, [])
   const { data: clubs } = useFetch(getClubs, [])
-  const [club, setClub] = useState(homeSlug)
+  const club = homeSlug // only the home team's jersey is on sale for a match
+  const [view, setView] = useState('back')
   const [colours, setColours] = useState(null) // { primary, secondary }; null = follow the club
   const [templateId, setTemplateId] = useState(null)
   const [name, setName] = useState('')
@@ -85,7 +86,16 @@ export default function JerseyStudio({ homeSlug, onChange }) {
     <fieldset className="studio">
       <legend>Your jersey</legend>
       <div className="jersey-preview">
+        <div className="view-toggle" role="group" aria-label="Jersey side">
+          {['front', 'back'].map((v) => (
+            <button key={v} type="button" className={v === view ? 'tab active' : 'tab'} aria-pressed={v === view} onClick={() => setView(v)}>
+              {v === 'front' ? 'Front' : 'Back'}
+            </button>
+          ))}
+        </div>
         <Jersey
+          view={view}
+          crestUrl={`/crests/${club}.webp`}
           template={template.svg_key}
           primary={primary}
           secondary={secondary}
@@ -96,22 +106,6 @@ export default function JerseyStudio({ homeSlug, onChange }) {
         />
       </div>
       <div className="studio-fields">
-        <label>
-          Club
-          <select
-            value={club}
-            onChange={(e) => {
-              setClub(e.target.value)
-              setColours(null) // back to the new club's colours
-            }}
-          >
-            {clubs.map((c) => (
-              <option key={c.slug} value={c.slug}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </label>
         <label>
           Style
           <select value={template.id} onChange={(e) => setTemplateId(Number(e.target.value))}>

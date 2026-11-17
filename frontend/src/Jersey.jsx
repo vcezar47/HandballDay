@@ -4,9 +4,9 @@ import { textColour } from './ClubBadge.jsx'
 const BODY =
   'M70 10 L40 22 L8 70 L36 92 L52 74 L52 205 Q52 212 60 212 L140 212 Q148 212 148 205 L148 74 L164 92 L192 70 L160 22 L130 10 Q100 30 70 10 Z'
 
-// Back view of a jersey. The colours are CSS variables on the <svg>, so changing them recolours the
+// Front or back view of a jersey (`view`). The colours are CSS variables on the <svg>, so changing them recolours the
 // whole drawing (and the CSS transition on `fill` animates it). Text is drawn by React, never as markup.
-export default function Jersey({ template = 'classic', primary, secondary, name = '', number = '', logoUrl, label }) {
+export default function Jersey({ template = 'classic', primary, secondary, name = '', number = '', logoUrl, crestUrl, view = 'back', label }) {
   const clip = useId()
   const ink = textColour(primary)
   const outline = ink === '#fff' ? '#111' : '#fff' // keeps the print readable on any template colours
@@ -16,7 +16,7 @@ export default function Jersey({ template = 'classic', primary, secondary, name 
       className="jersey"
       viewBox="0 0 200 222"
       role="img"
-      aria-label={label || `Jersey ${name} ${number}`}
+      aria-label={label || `Jersey ${name} ${number}, ${view} view`}
       style={{ '--primary': primary, '--secondary': secondary }}
     >
       <defs>
@@ -32,17 +32,28 @@ export default function Jersey({ template = 'classic', primary, secondary, name 
         {/* cuffs and collar, on every template */}
         <path className="j-secondary" d="M0 66 L40 96 L30 112 L-10 82 Z M200 66 L160 96 L170 112 L210 82 Z" />
       </g>
-      <path className="j-secondary" d="M70 10 Q100 30 130 10 L124 6 Q100 20 76 6 Z" />
+      <path className="j-secondary" d={view === 'front' ? 'M70 10 Q100 46 130 10 L123 6 Q100 34 77 6 Z' : 'M70 10 Q100 30 130 10 L124 6 Q100 20 76 6 Z'} />
       <path d={BODY} fill="none" stroke="rgb(0 0 0 / 0.35)" strokeWidth="1.5" />
-      <g textAnchor="middle" fill={ink} stroke={outline} strokeWidth="3" paintOrder="stroke" fontWeight="800">
-        <text x="100" y="66" fontSize="17" letterSpacing="1">
-          {name}
-        </text>
-        <text x="100" y="140" fontSize="72">
-          {number}
-        </text>
-      </g>
-      {logoUrl && <image href={logoUrl} x="76" y="156" width="48" height="42" preserveAspectRatio="xMidYMid meet" />}
+      {view === 'back' ? (
+        <>
+          <g textAnchor="middle" fill={ink} stroke={outline} strokeWidth="3" paintOrder="stroke" fontWeight="800">
+            <text x="100" y="66" fontSize="17" letterSpacing="1">
+              {name}
+            </text>
+            <text x="100" y="140" fontSize="72">
+              {number}
+            </text>
+          </g>
+          {logoUrl && <image href={logoUrl} x="76" y="156" width="48" height="42" preserveAspectRatio="xMidYMid meet" />}
+        </>
+      ) : (
+        <>
+          {crestUrl && <image href={crestUrl} x="108" y="50" width="30" height="30" preserveAspectRatio="xMidYMid meet" />}
+          <text x="100" y="150" textAnchor="middle" fill={ink} stroke={outline} strokeWidth="2" paintOrder="stroke" fontWeight="800" fontSize="34">
+            {number}
+          </text>
+        </>
+      )}
     </svg>
   )
 }

@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from ..db import get_db
-from ..schemas import ClubOut, ClubSummary, FixtureDetail, FixtureOut
+from ..schemas import ClubOut, ClubSummary, FixtureDetail, FixtureOut, SeatMapOut
 from ..services import CatalogService
 
 router = APIRouter(prefix="/api", tags=["catalog"])
@@ -34,3 +34,8 @@ def list_fixtures(
 @router.get("/fixtures/{fixture_id}", response_model=FixtureDetail)
 def get_fixture(fixture_id: int, db: Session = Depends(get_db)):
     return CatalogService(db).get_fixture(fixture_id)
+
+
+@router.get("/fixtures/{fixture_id}/seats", response_model=SeatMapOut)
+def get_seat_map(fixture_id: int, db: Session = Depends(get_db)):
+    return CatalogService(db).get_seat_map(fixture_id)

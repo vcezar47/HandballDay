@@ -115,4 +115,4 @@ class StaffService:
         self.db.commit()
         log_activity("scan_ok", user_id=user.id, ticket_id=ticket.id)
         zone = self.db.get(Zone, ticket.zone_id)
-        return ScanOut(zone=zone.name, fixture=FixtureOut.model_validate(fixture), used_at=ticket.used_at)
+        return ScanOut(zone=zone.name, seat=ticket.seat, fixture=FixtureOut.model_validate(fixture), used_at=ticket.used_at)

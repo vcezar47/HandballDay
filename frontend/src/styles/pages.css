@@ -419,13 +419,18 @@
   list-style: none;
 }
 
+.club-blocks li {
+  display: flex; /* every block fills its grid row, so a long name never makes one card taller than its neighbours */
+}
+
 .club-blocks a {
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  flex: 1;
   gap: 24px;
-  aspect-ratio: 1 / 1;
+  min-height: 190px;
   padding: 16px;
   background: var(--c);
   color: var(--t);
@@ -500,7 +505,7 @@
 }
 
 .crest {
-  border-radius: 50%;
+  border-radius: 18%;
   background: #fff;
   object-fit: contain;
 }
@@ -575,7 +580,7 @@
 /* ---- buying, tickets, staff ---- */
 
 .buy {
-  max-width: 420px;
+  max-width: none;
   padding: 22px;
   margin-top: 14px;
   border-radius: var(--radius);
@@ -726,9 +731,24 @@ input[type='color'] {
   cursor: pointer;
 }
 
+.view-toggle {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--panel);
+}
+
+.view-toggle .tab.active {
+  background: var(--text);
+  color: #fff;
+}
+
 .jersey-preview {
   display: grid;
-  place-items: center;
+  align-content: start;
+  justify-items: center;
+  gap: 12px;
   padding: 12px;
   border-radius: var(--radius);
   background: var(--soft);
@@ -848,12 +868,194 @@ textarea:focus {
   box-shadow: 0 10px 30px rgb(12 27 51 / 0.1);
 }
 
+/* ---- arena: seating plan and seat picker ---- */
+
+.arena svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  background: var(--soft);
+}
+
+.arena-floor {
+  fill: var(--text);
+}
+
+.arena-lines path,
+.arena-lines circle {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2;
+}
+
+.arena-lines .arena-goal {
+  fill: var(--orange);
+  stroke: #fff;
+}
+
+.arena-label {
+  fill: #fff;
+  fill-opacity: 0.5;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+}
+
+.sector {
+  cursor: pointer;
+}
+
+.sector:focus-visible {
+  outline: none;
+}
+
+.sector:focus-visible rect {
+  stroke: var(--text);
+  stroke-width: 3;
+}
+
+.sector:hover rect {
+  stroke: var(--text);
+  stroke-width: 2;
+}
+
+.sector.picked rect {
+  stroke: var(--text);
+  stroke-width: 3;
+}
+
+.sector.off {
+  cursor: not-allowed;
+}
+
+.sector text {
+  fill: #fff;
+  pointer-events: none;
+}
+
+.sector-code {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.sector-free {
+  font-size: 11px;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  padding: 0;
+  margin: 12px 0 0;
+  list-style: none;
+}
+
+.legend .swatch {
+  vertical-align: -5px;
+}
+
+.sector-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-bottom: 12px;
+}
+
+.sector-head h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.seat-scroll {
+  overflow-x: auto;
+  padding: 12px;
+  border-radius: var(--radius);
+  background: var(--soft);
+}
+
+.court-side {
+  min-width: max-content;
+  margin: 0 0 10px;
+  padding: 4px;
+  border-radius: 6px;
+  background: var(--text);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.seat-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  min-width: max-content;
+  margin-bottom: 4px;
+}
+
+.row-no {
+  width: 22px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-align: right;
+  padding-right: 4px;
+}
+
+.seat {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 2px solid var(--court);
+  border-radius: 8px 8px 4px 4px;
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.seat:hover:not(:disabled) {
+  background: #dce8fb;
+}
+
+.seat.chosen {
+  border-color: var(--text);
+  background: var(--orange);
+}
+
+.seat:disabled {
+  border-color: transparent;
+  background: #c1cbda;
+  color: #7c899c;
+  cursor: not-allowed;
+}
+
+.picked-seats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.picked-seats li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px 4px 14px;
+  border-radius: 999px;
+  background: var(--soft);
+  font-weight: 600;
+}
+
 /* ---- tablet and up ---- */
 
 @media (min-width: 600px) {
-  .buy {
-    max-width: 720px;
-  }
   .studio {
     grid-template-columns: 240px minmax(0, 1fr);
     align-items: start;

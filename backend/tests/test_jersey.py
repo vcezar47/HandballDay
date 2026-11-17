@@ -135,3 +135,11 @@ def test_jerseys_need_login_and_are_private(client, fan, gateway, make_user):
     assert client.get("/api/jerseys").json() == []
     client.post("/api/auth/logout")
     assert client.get("/api/jerseys").status_code == 401
+
+
+def test_only_the_home_teams_jersey_is_on_sale(client, fan):
+    fixture = fixture_detail(client)
+    other = next(c["slug"] for c in client.get("/api/clubs").json() if c["name"] != fixture["home"]["name"])
+    res = buy(client, fixture, jersey(client, club=other))
+    assert res.status_code == 422 and "home team" in res.json()["detail"]
+    assert buy(client, fixture, jersey(client, club=fixture["home"]["slug"])).status_code == 200

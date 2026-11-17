@@ -41,3 +41,16 @@ class FixtureOut(BaseModel):
 
 class FixtureDetail(FixtureOut):
     zones: list[ZoneOut] = []
+
+
+class SectorOut(BaseModel):
+    code: str
+    zone_id: int
+    zone: str
+    side: str  # north, south, west or east
+    rows: list[int]  # seats in each row, row 1 (nearest the court) first
+
+
+class SeatMapOut(BaseModel):
+    sectors: list[SectorOut]
+    taken: list[str]  # seat codes that are sold or held

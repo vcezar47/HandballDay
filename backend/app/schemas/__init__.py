@@ -1,5 +1,5 @@
 from .auth import AuthResponse, Login, Register, UserOut
-from .catalog import ClubOut, ClubSummary, FixtureDetail, FixtureOut, ZoneOut
+from .catalog import ClubOut, ClubSummary, FixtureDetail, FixtureOut, SeatMapOut, SectorOut, ZoneOut
 from .jersey import JerseyOut, JerseyRequest, TemplateOut, TemplatesOut, UploadOut
 from .orders import (
     CheckoutRequest, CheckoutResponse, FixtureCreate, FixtureUpdate, ScanOut, ScanRequest, TicketOut,
@@ -9,6 +9,6 @@ from .orders import (
 __all__ = [
     "AuthResponse", "CheckoutRequest", "CheckoutResponse", "ClubOut", "ClubSummary", "FixtureCreate",
     "FixtureDetail", "FixtureOut", "FixtureUpdate", "JerseyOut", "JerseyRequest", "Login", "Register",
-    "ScanOut", "ScanRequest", "TemplateOut", "TemplatesOut", "TicketOut", "UploadOut", "UserOut",
+    "ScanOut", "ScanRequest", "SeatMapOut", "SectorOut", "TemplateOut", "TemplatesOut", "TicketOut", "UploadOut", "UserOut",
     "VenueZoneOut", "ZoneOut", "ZoneSaleIn",
 ]

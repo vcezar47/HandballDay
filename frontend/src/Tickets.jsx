@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { QRCodeSVG } from 'qrcode.react'
 import { getJerseys, getTickets } from './api.js'
-import { formatDate, formatPrice } from './format.js'
+import { formatDate, formatPrice, formatSeat } from './format.js'
 import Jersey from './Jersey.jsx'
 import Seo from './Seo.jsx'
 import Status from './Status.jsx'
@@ -94,6 +94,7 @@ export default function Tickets() {
                 details={[
                   ['Venue', t.fixture.venue],
                   ['Zone', t.zone],
+                  ...(t.seat ? [['Seat', formatSeat(t.seat)]] : []),
                   ['Price', formatPrice(t.price_bani)],
                 ]}
               >

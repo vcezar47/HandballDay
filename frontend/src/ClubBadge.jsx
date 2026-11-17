@@ -5,7 +5,7 @@ export function textColour(hex) {
   return 0.299 * r + 0.587 * g + 0.114 * b > 150 ? '#111' : '#fff'
 }
 
-// The club's crest (public/crests/<slug>.webp) on a white disc, so every crest reads on any colour.
+// The club's crest (public/crests/<slug>.webp) on a white rounded square (a circle would cut the crests' corners), so every crest reads on any colour.
 // If the image is missing, falls back to club colours and the city's initials.
 export default function ClubBadge({ club, size = 40 }) {
   const [broken, setBroken] = useState(false)
@@ -17,7 +17,7 @@ export default function ClubBadge({ club, size = 40 }) {
         src={`/crests/${club.slug}.webp`}
         width={size}
         height={size}
-        style={{ padding: Math.round(size * 0.14) }} // percentages would resolve against the parent, not the image
+        style={{ padding: Math.round(size * 0.1) }} // percentages would resolve against the parent, not the image
         alt={`${club.name} badge`}
         onError={() => setBroken(true)}
       />

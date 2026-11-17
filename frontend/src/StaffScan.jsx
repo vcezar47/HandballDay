@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { scanTicket } from './api.js'
-import { formatDate, formatTime } from './format.js'
+import { formatDate, formatSeat, formatTime } from './format.js'
 import Seo from './Seo.jsx'
 
 // A code field first: a handheld scanner "types" the code and presses Enter, so it works here as is.
@@ -20,7 +20,7 @@ export default function StaffScan() {
       const t = await scanTicket(code.trim())
       setResult({
         ok: true,
-        text: `Valid: ${t.fixture.home.name} vs ${t.fixture.away.name}, ${t.zone}, ${formatDate(t.fixture.kickoff_at)} ${formatTime(t.fixture.kickoff_at)}. Checked in.`,
+        text: `Valid: ${t.fixture.home.name} vs ${t.fixture.away.name}, ${t.zone}${t.seat ? `, ${formatSeat(t.seat)}` : ''}, ${formatDate(t.fixture.kickoff_at)} ${formatTime(t.fixture.kickoff_at)}. Checked in.`,
       })
     } catch (err) {
       setResult({ ok: false, text: err.message })
