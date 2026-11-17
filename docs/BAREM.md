@@ -78,7 +78,7 @@ Legend: ✅ done and proven · 🟡 done, but its final proof needs the site to 
 | 02 | CAPTCHA | 0,20 | ✅ | Cloudflare Turnstile on register, login and logo upload, verified on the server and failing closed: `security/captcha.py`; `tests/test_hardening.py` |
 | 03 | Steganography protection | 0,20 | ✅ | Every upload is decoded, stripped of metadata, resized and re-encoded as lossy WebP; the original is never stored. `tests/test_uploads.py` (EXIF removed, appended payload gone). A mitigation, not a proof, and the oral exam answer should say so |
 | 04 | Security headers, grade A | 0,20 | 🟡 | `nosniff`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, strict CSP, plus HSTS over HTTPS: `security/headers.py` (API) and `frontend/public/.htaccess` (pages); tests keep them in step. The grade itself must be read with the Security Headers Inspector on the page you hand in, and HSTS only exists over HTTPS |
-| 05 | `.htaccess` | 0,20 | 🟡 | `frontend/public/.htaccess`: blocks `.env`, `.git`, source, log and config files (403), no directory listing, plus SPA routing, API proxy, compression, caching, headers and the HTTPS redirect. Needs Apache to show the 403s: `deploy/README.md` |
+| 05 | `.htaccess` | 0,20 | ✅ | `frontend/public/.htaccess`, run for real in the official Apache 2.4 container (`deploy/httpd-test.conf`, commands in `deploy/README.md`): `/.env`, `/.git/config` and `/.htaccess` answer **403**, `/assets/` lists nothing, `/clubs` loads the app, a missing asset is a real 404, JS and CSS are gzip-compressed, hashed assets cache for a year, `http` redirects to `https` (301), `/api`, `/sitemap.xml` and `/robots.txt` reach the backend. Re-run the same checks on the live server if you host one |
 
 ## What the hosting decision still decides
 

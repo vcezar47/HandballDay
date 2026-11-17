@@ -56,7 +56,7 @@ Legend: ⬜ not started · 🟡 partial · ✅ done
 | 10.02 | CAPTCHA | M5 | Cloudflare Turnstile (free, has test keys) on register, login and jersey upload; verified server-side, fails closed | ✅ |
 | 10.03 | Steganography protection | M4 | Decode, strip metadata, resize and re-encode every upload to lossy WebP; original is discarded | ✅ |
 | 10.04 | Security headers grade A | M5, M6 | CSP, HSTS, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy; graded on the live site; API policy and SPA policy are in place, the grade is measured in M6 | 🟡 |
-| 10.05 | `.htaccess` | M6 | `frontend/public/.htaccess`: 403 for private files, no listing, SPA fallback, `/api` proxy, compression, caching, headers, HTTPS redirect. Written; its 403s are shown once Apache serves it (D3 or the Docker test) | 🟡 |
+| 10.05 | `.htaccess` | M6 | `frontend/public/.htaccess`: 403 for private files, no listing, SPA fallback, `/api` proxy, compression, caching, headers, HTTPS redirect. Tested in an Apache 2.4 container: 403s, routing, compression, caching, redirect and the API proxy all behave | ✅ |
 
 ## 3. Milestones
 

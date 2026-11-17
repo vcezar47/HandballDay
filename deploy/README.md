@@ -76,7 +76,13 @@ docker run --rm -p 8080:80 \
   -v "$PWD/deploy/httpd-test.conf:/usr/local/apache2/conf/httpd.conf:ro" httpd:2.4
 ```
 
-Then `curl -I http://localhost:8080/.env` and the other checks above (replace the address; HSTS is not sent over plain HTTP, and the `/api` proxy needs the backend reachable at 127.0.0.1:3000 inside the container, so it is not part of this local test).
+Then `curl -I http://localhost:8080/.env` and the other checks above (use `http://localhost:8080`; HSTS is not sent over plain HTTP, so it cannot be seen here). To include the `/api` proxy, start the backend on your machine and bridge the container's 127.0.0.1:3000 to it:
+
+```bash
+docker run -d --name hd-socat --network container:<apache container name> alpine/socat tcp-listen:3000,fork,reuseaddr tcp:host.docker.internal:3000
+```
+
+Then `curl http://localhost:8080/api/health` answers through Apache.
 
 ## What your decision changes (see also `docs/BAREM.md`)
 

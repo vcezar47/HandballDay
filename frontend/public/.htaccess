@@ -39,7 +39,7 @@ RedirectMatch 403 (^|/)\.(git|env|svn)
 
 # ---- 5. Compression ----
 <IfModule mod_deflate.c>
-  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/javascript application/json application/xml image/svg+xml
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml text/javascript application/javascript application/json application/xml image/svg+xml
 </IfModule>
 
 # ---- 6. Caching: hashed build files forever, the page itself never ----
@@ -56,8 +56,10 @@ RedirectMatch 403 (^|/)\.(git|env|svn)
 </IfModule>
 
 # ---- 7. Security headers (barem 10.04) ----
-# setifempty: responses that already carry a header (the API sets its own stricter CSP) keep theirs.
+# Pages and static files only: proxied responses (the API, sitemap, robots) already carry the backend's own
+# headers, and Apache's `always` table cannot see those, so setting them here would send every header twice.
 <IfModule mod_headers.c>
+<If "%{REQUEST_URI} !~ m#^/(api/|sitemap\.xml$|robots\.txt$)#">
   Header always unset X-Powered-By
   Header always setifempty X-Content-Type-Options "nosniff"
   Header always setifempty X-Frame-Options "DENY"
@@ -68,4 +70,5 @@ RedirectMatch 403 (^|/)\.(git|env|svn)
   Header always setifempty Content-Security-Policy "default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
   # HSTS only over HTTPS: browsers ignore it on plain HTTP, and it must not be promised there.
   Header always setifempty Strict-Transport-Security "max-age=31536000; includeSubDomains" "expr=%{HTTPS} == 'on'"
+</If>
 </IfModule>
