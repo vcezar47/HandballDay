@@ -6,7 +6,7 @@ Stack: FastAPI + SQLAlchemy 2 + PostgreSQL, React (Vite). Reused from the lab sc
 
 Data: the Romanian Liga Florilor 2026/27, 14 clubs, seeded from the HandballManager repo (see section 5).
 
-Source of truth for grading: the criteria below come from the summary in `Site-DAW/docs/BAREM.md`. The original `Barem_evaluare_proiect_web.md` was not available, so compare this table against it before M1.
+Source of truth for grading: `Barem_evaluare_proiect_web.pdf` (kept outside the repo, in Downloads). Nine sections of 1,00 point; the per-row points and where each is proven are in [`BAREM.md`](BAREM.md). The table below was checked against the real sheet in M6, which changed one thing: rate limiting is "100 requests a minute", so the default limit is 100.
 
 Legend: ⬜ not started · 🟡 partial · ✅ done
 
@@ -44,19 +44,19 @@ Legend: ⬜ not started · 🟡 partial · ✅ done
 | 6.02 | Git | M0 | This repo; small commits per task | 🟡 |
 | 6.03 | GitHub Actions CI | M0 | Backend tests against a Postgres service container, frontend lint and build | 🟡 |
 | 7.01 | Activity log file | M1, M3, M5 | `backend/logs/activity.log`, rotating; register, login, failures, orders, scans, admin actions; viewer in admin panel | ✅ |
-| 7.02 | Hosting | M6 | Apache VPS or equivalent, see decision D3 | ⬜ |
-| 8.01 | Lighthouse SEO ≥90 | M2, M6 | Per-page title, meta description, canonical, `robots.txt`, `sitemap.xml`, alt text, crawlable links; measured on the deployed site | 🟡 |
+| 7.02 | Hosting | M6 | The sheet needs the site published and reachable, one HTML page is enough (0,50 pt). Deploy files are ready in `deploy/`; waiting for decision D3 | 🟡 |
+| 8.01 | Lighthouse SEO ≥90 | M2, M6 | Per-page title, meta description, canonical, `robots.txt`, `sitemap.xml`, alt text, crawlable links; Lighthouse SEO 100 on four page types against the production build; redo on the live URL | ✅ |
 | 8.02 | Stripe payments | M3 | Hosted Checkout Session in test mode, webhook with signature check, idempotent fulfilment; a test-card purchase was run end to end | ✅ |
 | 9.01 | CSRF | M1 | Double-submit token middleware plus SameSite=Lax, tested | ✅ |
 | 9.02 | XSS | M2, M5 | React escaping only (no `dangerouslySetInnerHTML`), strict CSP, jersey text restricted to a safe character set, test with `<script>` payloads; display names and jersey text use a safe character set; a test scans the frontend for HTML-injection APIs | ✅ |
 | 9.03 | SQL injection | M1 | ORM only, bound parameters, Pydantic validation, test with `' OR 1=1 --` | ✅ |
 | 9.04 | Max 12 MB upload | M4 | Reject by `Content-Length` and again while streaming, so a lying header can't bypass it | ✅ |
 | 9.05 | Allowed extensions | M4 | Whitelist png / jpg / jpeg / webp, checked on name and on real file content | ✅ |
-| 10.01 | Rate limiting | M5 | slowapi: 10 per minute on login, register and checkout, 20 on uploads, 300 elsewhere; 429 with `Retry-After` | ✅ |
+| 10.01 | Rate limiting | M5 | slowapi: 10 per minute on login, register and checkout, 20 on uploads, 100 elsewhere (the barem's number); 429 with `Retry-After` | ✅ |
 | 10.02 | CAPTCHA | M5 | Cloudflare Turnstile (free, has test keys) on register, login and jersey upload; verified server-side, fails closed | ✅ |
 | 10.03 | Steganography protection | M4 | Decode, strip metadata, resize and re-encode every upload to lossy WebP; original is discarded | ✅ |
 | 10.04 | Security headers grade A | M5, M6 | CSP, HSTS, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy; graded on the live site; API policy and SPA policy are in place, the grade is measured in M6 | 🟡 |
-| 10.05 | `.htaccess` | M6 | SPA fallback, `/api` proxy, compression, caching, headers, HTTPS redirect | ⬜ |
+| 10.05 | `.htaccess` | M6 | `frontend/public/.htaccess`: 403 for private files, no listing, SPA fallback, `/api` proxy, compression, caching, headers, HTTPS redirect. Written; its 403s are shown once Apache serves it (D3 or the Docker test) | 🟡 |
 
 ## 3. Milestones
 
@@ -120,7 +120,7 @@ Done when: a fan buys a ticket plus a jersey in one payment, and 4.04, 9.04, 9.0
 
 Done when: 10.01, 10.02, 9.02, 7.01 have proof and a full pass through the app produces a readable activity log.
 
-### M6: Deploy and prove it (M)
+### M6: Deploy and prove it (M) 🟡 files, docs and local proofs done; the live parts wait for decision D3
 - Host on a server with Apache `mod_rewrite`, `mod_proxy`, `mod_headers` and HTTPS (D3).
 - `.htaccess` for SPA fallback, `/api` proxy, compression, caching, HTTPS redirect, headers.
 - Production env vars, Stripe webhook pointed at the public URL.
@@ -163,7 +163,7 @@ The activity log is a file (barem 7.01), not a table.
 |---|---|---|
 | D1 | League and clubs | **Decided:** Liga Florilor 2026/27, all 14 clubs, real data from the HandballManager repo |
 | D2 | Jersey delivery | **Decided:** pickup at the match the jersey is bought for |
-| D3 | Hosting | **Open.** Build locally first and decide before M6. Check the original barem for whether 7.02 is required for your target grade |
+| D3 | Hosting | **Open.** Checked against the barem: only 7.02 (0,50 pt) strictly needs a public site, and one published HTML page is enough. A full Apache + HTTPS deployment also makes 10.04 and 10.05 convincing; see `deploy/README.md` |
 | D4 | Solo project accepted | **Decided:** yes. Still compare this plan with the original `Barem_evaluare_proiect_web.md` |
 
 ### Seed data (from `D:\Github Desktop\HandballManager`)

@@ -1,0 +1,26 @@
+# systemd unit for the API. Install as /etc/systemd/system/handballday.service, then:
+#   systemctl daemon-reload && systemctl enable --now handballday
+[Unit]
+Description=HandballDay API (uvicorn)
+After=network.target postgresql.service
+
+[Service]
+User=handballday
+WorkingDirectory=/opt/handballday/backend
+# DB password, SECRET_KEY, Stripe and Turnstile keys, PUBLIC_URL: see backend/.env.production.example
+EnvironmentFile=/opt/handballday/backend/.env
+Environment=APP_ENV=prod
+# Listens on localhost only; Apache is the public face. --proxy-headers makes the rate limiter see the
+# visitor's address from X-Forwarded-For, trusted only when it comes from Apache on this machine.
+ExecStart=/opt/handballday/backend/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 3000 --proxy-headers --forwarded-allow-ips=127.0.0.1
+Restart=on-failure
+RestartSec=3
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/handballday/backend/logs /opt/handballday/backend/uploads
+
+[Install]
+WantedBy=multi-user.target

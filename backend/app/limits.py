@@ -1,4 +1,6 @@
-"""Rate limits (barem 10.01): strict on the endpoints worth abusing, loose everywhere else.
+"""Rate limits (barem 10.01: after 100 requests within a minute, further ones are blocked for a while).
+
+Strict on the endpoints worth abusing, and 100 a minute on everything else, which is the barem's number.
 
 shortcut: counters live in this process's memory, so they reset on restart and are not shared
 between workers; point slowapi at Redis (storage_uri) if the app ever runs more than one process.
@@ -15,12 +17,14 @@ from .config import get_config
 
 STRICT = "10/minute"  # login, register, checkout
 UPLOAD = "20/minute"
-LOOSE = "300/minute"  # every other route
+LOOSE = "100/minute"  # every other route: the 101st request in a minute gets a 429
 
-limiter = Limiter(key_func=get_remote_address, default_limits=[LOOSE], enabled=get_config().rate_limit)
+# application_limits: one budget per visitor across the whole API, not one per route.
+limiter = Limiter(key_func=get_remote_address, application_limits=[LOOSE], enabled=get_config().rate_limit)
 
 
-async def rate_limit_handler(_: Request, exc: RateLimitExceeded) -> JSONResponse:
+def rate_limit_handler(_: Request, exc: RateLimitExceeded) -> JSONResponse:
+    # Not async on purpose: slowapi's middleware ignores async handlers and answers in its own format.
     # Same JSON shape as every other error; the windows are one minute long, so a minute is a safe wait.
     return JSONResponse(
         {"detail": "Too many requests, please slow down and try again in a minute", "code": "rate_limited"},

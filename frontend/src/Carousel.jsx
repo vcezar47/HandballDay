@@ -78,9 +78,9 @@ export default function Carousel({ fixtures }) {
                 <span className="vs">vs</span>
                 <ClubBadge club={f.away} size={56} />
               </div>
-              <h3>
+              <h2>
                 {f.home.name} <span className="vs">vs</span> {f.away.name}
-              </h3>
+              </h2>
               <p className="muted">{f.venue}</p>
               <Link className="pill" to={`/fixtures/${f.id}`}>
                 See tickets

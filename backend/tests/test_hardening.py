@@ -18,6 +18,7 @@ from .conftest import PASSWORD, log_in, make_client
 
 BODY = {"email": "ana@example.com", "display_name": "Ana", "password": PASSWORD}
 VITE_CONFIG = Path(__file__).resolve().parents[2] / "frontend" / "vite.config.js"
+HTACCESS = Path(__file__).resolve().parents[2] / "frontend" / "public" / ".htaccess"
 
 
 @pytest.fixture
@@ -51,9 +52,12 @@ def test_checkout_is_limited(client, limited, make_user):
     assert client.post("/api/checkout", json=body).status_code == 429
 
 
-def test_every_other_route_has_a_loose_default_limit(client, limited):
-    assert all(client.get("/api/health").status_code == 200 for _ in range(300))
-    assert client.get("/api/health").status_code == 429
+def test_after_100_requests_in_a_minute_the_rest_are_blocked(client, limited):
+    # barem 10.01: "after 100 consecutive requests in under a minute, further requests are blocked temporarily"
+    assert all(client.get("/api/health").status_code == 200 for _ in range(100))
+    res = client.get("/api/health")
+    assert res.status_code == 429 and res.json()["code"] == "rate_limited"
+    assert client.get("/api/clubs").status_code == 429  # the budget is per visitor, not per route
 
 
 def test_limits_are_per_route_not_shared(client, limited):
@@ -175,3 +179,13 @@ def test_the_spa_policy_is_strict_and_matches_the_vite_preview_config():
     assert "frame-ancestors 'none'" in SPA_CSP and "object-src 'none'" in SPA_CSP and "default-src 'self'" in SPA_CSP
     block = VITE_CONFIG.read_text(encoding="utf-8").split("const SPA_CSP =")[1].split("\n\n")[0]  # the string is split over lines there
     assert "".join(re.findall(r'"([^"]*)"', block)) == SPA_CSP, "update frontend/vite.config.js to match SPA_CSP"
+
+
+def test_htaccess_sends_the_same_policy_and_the_headers_the_grader_looks_for():
+    text = HTACCESS.read_text(encoding="utf-8")
+    assert f'Content-Security-Policy "{SPA_CSP}"' in text, "update frontend/public/.htaccess to match SPA_CSP"
+    for header in ("X-Content-Type-Options", "X-Frame-Options", "Referrer-Policy", "Permissions-Policy", "Strict-Transport-Security"):
+        assert f"Header always setifempty {header}" in text
+    # routing, compression, caching and the HTTPS redirect are the other things the barem asks of this file
+    for part in ("RewriteRule ^(api/", "/index.html [L]", "mod_deflate", "immutable", "R=301", "Options -Indexes"):
+        assert part in text

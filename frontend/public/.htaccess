@@ -1,0 +1,71 @@
+# HandballDay single-page app on Apache 2.4 (barem 10.05). Vite copies this file into dist/.
+#
+# Needs: mod_rewrite, mod_proxy, mod_proxy_http, mod_headers, mod_deflate, mod_expires, and
+# `AllowOverride All` on the folder (see deploy/apache-vhost.conf).
+# The Content-Security-Policy below must equal SPA_CSP in backend/app/security/headers.py;
+# a backend test fails if they drift apart.
+
+Options -Indexes -MultiViews
+ServerSignature Off
+
+# ---- 1. HTTPS only (not for localhost, so the file can be tried without a certificate) ----
+RewriteEngine On
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+RewriteCond %{HTTP_HOST} !^(localhost|127\.0\.0\.1)(:[0-9]+)?$
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ---- 2. The API (and the two crawler files the backend builds from the database) go to uvicorn ----
+# The proxy writes X-Forwarded-For itself; dropping the client's copy first means it cannot be spoofed,
+# and the rate limiter in the backend sees the real visitor address.
+<IfModule mod_headers.c>
+  RequestHeader unset X-Forwarded-For
+  RequestHeader set X-Forwarded-Proto expr=%{REQUEST_SCHEME}
+</IfModule>
+RewriteRule ^(api/.*|sitemap\.xml|robots\.txt)$ http://127.0.0.1:3000/$1 [P,L,QSA]
+
+# ---- 3. Single-page app: unknown paths without a file extension get index.html ----
+# A missing /assets/x.js stays a real 404 instead of an HTML page pretending to be a script.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !\.[A-Za-z0-9]+$
+RewriteRule ^ /index.html [L]
+
+# ---- 4. Never serve source, config, logs or dotfiles, whatever ends up in the folder ----
+<FilesMatch "(^\.|\.(env|py|pyc|log|sql|ini|bak|sh|conf|md)$)">
+  Require all denied
+</FilesMatch>
+RedirectMatch 403 (^|/)\.(git|env|svn)
+
+# ---- 5. Compression ----
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/javascript application/json application/xml image/svg+xml
+</IfModule>
+
+# ---- 6. Caching: hashed build files forever, the page itself never ----
+<IfModule mod_headers.c>
+  <If "%{REQUEST_URI} =~ m#^/assets/#">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </If>
+  <FilesMatch "^index\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  <FilesMatch "\.(svg|ico)$">
+    Header set Cache-Control "public, max-age=86400"
+  </FilesMatch>
+</IfModule>
+
+# ---- 7. Security headers (barem 10.04) ----
+# setifempty: responses that already carry a header (the API sets its own stricter CSP) keep theirs.
+<IfModule mod_headers.c>
+  Header always unset X-Powered-By
+  Header always setifempty X-Content-Type-Options "nosniff"
+  Header always setifempty X-Frame-Options "DENY"
+  Header always setifempty Referrer-Policy "strict-origin-when-cross-origin"
+  Header always setifempty Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+  Header always setifempty Cross-Origin-Opener-Policy "same-origin"
+  Header always setifempty Cross-Origin-Resource-Policy "same-origin"
+  Header always setifempty Content-Security-Policy "default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+  # HSTS only over HTTPS: browsers ignore it on plain HTTP, and it must not be promised there.
+  Header always setifempty Strict-Transport-Security "max-age=31536000; includeSubDomains" "expr=%{HTTPS} == 'on'"
+</IfModule>
