@@ -92,8 +92,8 @@ Then wire Apache (replace the name) and get the certificate:
 ```bash
 sudo cp deploy/apache-vhost.conf /etc/apache2/sites-available/handballday.conf
 sudo sed -i 's/YOUR.DOMAIN.EXAMPLE/YOURNAME.duckdns.org/' /etc/apache2/sites-available/handballday.conf
-sudo cp deploy/apache-hardening.conf /etc/apache2/conf-available/handballday-hardening.conf
-sudo a2ensite handballday && sudo a2enconf handballday-hardening && sudo a2dissite 000-default
+sudo cp deploy/apache-hardening.conf /etc/apache2/conf-available/zz-handballday-hardening.conf   # zz: must load after Ubuntu's security.conf, which would otherwise win
+sudo a2ensite handballday && sudo a2enconf zz-handballday-hardening && sudo a2dissite 000-default
 sudo apache2ctl configtest && sudo systemctl reload apache2
 sudo certbot --apache -d YOURNAME.duckdns.org
 ```

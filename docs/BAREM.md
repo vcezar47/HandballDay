@@ -51,14 +51,14 @@ Legend: ✅ done and proven · 🟡 done, but its final proof needs the site to 
 | # | Criterion | Pts | Status | Proof |
 |---|---|:-:|:-:|---|
 | 01 | Activity log file | 0,50 | ✅ | `backend/logs/activity.log` (rotating, one JSON-safe line per event): register, login and failures, logout, forbidden, CSRF and CAPTCHA rejections, checkout, payments, scans, uploads, role and club changes. Viewer: Admin → Activity. Tests: `tests/test_activity.py`, `tests/test_admin.py` |
-| 02 | Hosting | 0,50 | 🟡 | Deployment files are ready (`deploy/`, `frontend/public/.htaccess`). The sheet accepts even one published HTML page. **Needs your hosting decision**, see below |
+| 02 | Hosting | 0,50 | ✅ | Live at **https://handballday.duckdns.org** (AWS EC2, Ubuntu 24.04, Apache 2.4 with a Let's Encrypt certificate, API behind it as a systemd service). Files: `deploy/`, `frontend/public/.htaccess` |
 
 ## Nota 8: Optimizare și servicii externe (1,00)
 
 | # | Criterion | Pts | Status | Proof |
 |---|---|:-:|:-:|---|
-| 01 | SEO ≥90 on Lighthouse | 0,50 | ✅ | Lighthouse SEO **100** on home, club page, fixture list and fixture page (mobile and desktop), run against the production build; per-page title, description and canonical (`Seo.jsx`), `robots.txt`, `sitemap.xml`, alt text, crawlable links. Re-run on the live URL once it exists (`deploy/README.md`) |
-| 02 | Online payments (Stripe) | 0,50 | ✅ | Stripe Checkout in test mode, signed webhook, idempotent fulfilment; a real test-card purchase was run end to end. `backend/app/gateways/payment.py`, `services/orders.py`, `tests/test_orders.py` |
+| 01 | SEO ≥90 on Lighthouse | 0,50 | ✅ | Lighthouse SEO **100** on home, club page, fixture list and fixture page (mobile and desktop), run against the production build; per-page title, description and canonical (`Seo.jsx`), `robots.txt`, `sitemap.xml`, alt text, crawlable links. Also run on the live site: SEO 100 on `/` (mobile) and `/clubs/minaur-baia-mare` (desktop), accessibility 100, best practices 96 |
+| 02 | Online payments (Stripe) | 0,50 | ✅ | Stripe Checkout in test mode, signed webhook, idempotent fulfilment; a real test-card purchase was run end to end, locally and on the live site (Stripe delivered `checkout.session.completed` to the live webhook with a **200 OK**: [screenshot](screenshots/stripe-webhook-live-200.png)). `backend/app/gateways/payment.py`, `services/orders.py`, `tests/test_orders.py` |
 
 ## Nota 9: Securitate, nivelul I (1,00)
 
@@ -77,9 +77,9 @@ Legend: ✅ done and proven · 🟡 done, but its final proof needs the site to 
 | 01 | Rate limiting (100 requests a minute) | 0,20 | ✅ | `backend/app/limits.py`: one budget of 100 requests a minute per visitor across the API (the 101st gets a 429 with `Retry-After`), and stricter limits on login, register, checkout and upload. `tests/test_hardening.py` |
 | 02 | CAPTCHA | 0,20 | ✅ | Cloudflare Turnstile on register, login and logo upload, verified on the server and failing closed: `security/captcha.py`; `tests/test_hardening.py` |
 | 03 | Steganography protection | 0,20 | ✅ | Every upload is decoded, stripped of metadata, resized and re-encoded as lossy WebP; the original is never stored. `tests/test_uploads.py` (EXIF removed, appended payload gone). A mitigation, not a proof, and the oral exam answer should say so |
-| 04 | Security headers, grade A | 0,20 | 🟡 | `nosniff`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, strict CSP, plus HSTS over HTTPS: `security/headers.py` (API) and `frontend/public/.htaccess` (pages); tests keep them in step. The grade itself must be read with the Security Headers Inspector on the page you hand in, and HSTS only exists over HTTPS |
-| 05 | `.htaccess` | 0,20 | ✅ | `frontend/public/.htaccess`, run for real in the official Apache 2.4 container (`deploy/httpd-test.conf`, commands in `deploy/README.md`): `/.env`, `/.git/config` and `/.htaccess` answer **403**, `/assets/` lists nothing, `/clubs` loads the app, a missing asset is a real 404, JS and CSS are gzip-compressed, hashed assets cache for a year, `http` redirects to `https` (301), `/api`, `/sitemap.xml` and `/robots.txt` reach the backend. Re-run the same checks on the live server if you host one |
+| 04 | Security headers, grade A | 0,20 | ✅ | Security Headers Inspector on https://handballday.duckdns.org: **A+, 6/6 headers present, score 100%** ([screenshot](screenshots/security-headers-inspector-A-plus.png)). Headers: `Content-Security-Policy`, `Strict-Transport-Security`, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`; set in `frontend/public/.htaccess` (pages) and `backend/app/security/headers.py` (API) |
+| 05 | `.htaccess` | 0,20 | ✅ | `frontend/public/.htaccess`, run for real in the official Apache 2.4 container (`deploy/httpd-test.conf`, commands in `deploy/README.md`): `/.env`, `/.git/config` and `/.htaccess` answer **403**, `/assets/` lists nothing, `/clubs` loads the app, a missing asset is a real 404, JS and CSS are gzip-compressed, hashed assets cache for a year, `http` redirects to `https` (301), `/api`, `/sitemap.xml` and `/robots.txt` reach the backend. The same checks pass on the live server: `curl -I https://handballday.duckdns.org/.env` → 403, `/.git/config` → 403, `/assets/` → 403 |
 
-## What the hosting decision still decides
+## What is left
 
-See the end of [`deploy/README.md`](../deploy/README.md): 7.02 (0,50) needs something published; 10.04 (0,20) and 10.05 (0,20) need the pages served by Apache over HTTPS to be shown convincingly.
+Nothing for the barem. Before the exam: start the AWS instance a day early and check the site (`docs/DEMO.md`), and take the screenshots listed there.

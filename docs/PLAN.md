@@ -27,7 +27,7 @@ Legend: ⬜ not started · 🟡 partial · ✅ done
 | # | Criterion | Milestone | How we satisfy it | Status |
 |---|---|:-:|---|:-:|
 | 2.01 | DB in 3NF | M0 | Schema in section 4, written up in `docs/DATABASE.md` with an ER diagram; price snapshots on line items justified there | ✅ |
-| 2.02 | ≥4 use cases | M2–M5 | UC1–UC7 above (UC1 and UC2 done) | 🟡 |
+| 2.02 | ≥4 use cases | M2–M5 | UC1–UC7 above, all built and walked through in `docs/DEMO.md` | ✅ |
 | 2.03 | MVC / Repository | M0 | `models/`, `repositories/` (with `IRepository`), `services/`, `routers/` (controllers), React pages as views | ✅ |
 | 2.04 | Images, text, tables, links | M2 | Club pages, fixture tables, nav and footer links, club colours, logo and club badges (SVG; real crests stay out of the repo) | ✅ |
 | 3.01 | ≥3 classes | M0 | Models, repositories, services, errors, gateways | ✅ |
@@ -40,12 +40,12 @@ Legend: ⬜ not started · 🟡 partial · ✅ done
 | 4.04 | Animation | M2, M4 | Existing flow background, page transitions, jersey preview recolouring live | ✅ |
 | 5.01 | ≥2 CSS files, ≥10 properties | M2 | Split `styles.css` into `variables`, `base`, `layout`, `components`, `pages`, `animations` | ✅ |
 | 5.02 | Responsive | M2 | Mobile-first, breakpoints near 600 and 1024 px, screenshots at 390 / 768 / 1440 px in `docs/screenshots/` | ✅ |
-| 6.01 | ≥5 unit tests | M1+ | pytest from M1 on, target 40+; a few Vitest tests for the jersey and carousel logic | 🟡 |
-| 6.02 | Git | M0 | This repo; small commits per task | 🟡 |
-| 6.03 | GitHub Actions CI | M0 | Backend tests against a Postgres service container, frontend lint and build | 🟡 |
+| 6.01 | ≥5 unit tests | M1+ | 165 pytest tests in `backend/tests/` (Vitest tests were not needed) | ✅ |
+| 6.02 | Git | M0 | `github.com/vcezar47/HandballDay`, one commit per phase | ✅ |
+| 6.03 | GitHub Actions CI | M0 | Backend tests against a Postgres service container, frontend lint and build; green runs on the repo's Actions tab | ✅ |
 | 7.01 | Activity log file | M1, M3, M5 | `backend/logs/activity.log`, rotating; register, login, failures, orders, scans, admin actions; viewer in admin panel | ✅ |
-| 7.02 | Hosting | M6 | The sheet needs the site published and reachable, one HTML page is enough (0,50 pt). Deploy files are ready in `deploy/`; waiting for decision D3 | 🟡 |
-| 8.01 | Lighthouse SEO ≥90 | M2, M6 | Per-page title, meta description, canonical, `robots.txt`, `sitemap.xml`, alt text, crawlable links; Lighthouse SEO 100 on four page types against the production build; redo on the live URL | ✅ |
+| 7.02 | Hosting | M6 | Live at https://handballday.duckdns.org: AWS EC2 (Ubuntu 24.04), Apache 2.4 and a Let's Encrypt certificate, API as a systemd service (`deploy/`). The sheet only needs something published (0,50 pt) | ✅ |
+| 8.01 | Lighthouse SEO ≥90 | M2, M6 | Per-page title, meta description, canonical, `robots.txt`, `sitemap.xml`, alt text, crawlable links; Lighthouse SEO 100 against the production build and on the live site | ✅ |
 | 8.02 | Stripe payments | M3 | Hosted Checkout Session in test mode, webhook with signature check, idempotent fulfilment; a test-card purchase was run end to end | ✅ |
 | 9.01 | CSRF | M1 | Double-submit token middleware plus SameSite=Lax, tested | ✅ |
 | 9.02 | XSS | M2, M5 | React escaping only (no `dangerouslySetInnerHTML`), strict CSP, jersey text restricted to a safe character set, test with `<script>` payloads; display names and jersey text use a safe character set; a test scans the frontend for HTML-injection APIs | ✅ |
@@ -55,14 +55,14 @@ Legend: ⬜ not started · 🟡 partial · ✅ done
 | 10.01 | Rate limiting | M5 | slowapi: 10 per minute on login, register and checkout, 20 on uploads, 100 elsewhere (the barem's number); 429 with `Retry-After` | ✅ |
 | 10.02 | CAPTCHA | M5 | Cloudflare Turnstile (free, has test keys) on register, login and jersey upload; verified server-side, fails closed | ✅ |
 | 10.03 | Steganography protection | M4 | Decode, strip metadata, resize and re-encode every upload to lossy WebP; original is discarded | ✅ |
-| 10.04 | Security headers grade A | M5, M6 | CSP, HSTS, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy; graded on the live site; API policy and SPA policy are in place, the grade is measured in M6 | 🟡 |
-| 10.05 | `.htaccess` | M6 | `frontend/public/.htaccess`: 403 for private files, no listing, SPA fallback, `/api` proxy, compression, caching, headers, HTTPS redirect. Tested in an Apache 2.4 container: 403s, routing, compression, caching, redirect and the API proxy all behave | ✅ |
+| 10.04 | Security headers grade A | M5, M6 | CSP, HSTS, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy; Security Headers Inspector on the live site shows **A+** (screenshot in `docs/screenshots/`) | ✅ |
+| 10.05 | `.htaccess` | M6 | `frontend/public/.htaccess`: 403 for private files, no listing, SPA fallback, `/api` proxy, compression, caching, headers, HTTPS redirect. Tested in an Apache container and on the live server | ✅ |
 
 ## 3. Milestones
 
 Each milestone ends with tests passing and a commit. Sizes: S ≈ an evening, M ≈ a few evenings, L ≈ a week.
 
-### M0: Foundations (S) ✅ built, CI not yet seen green
+### M0: Foundations (S) ✅ built, CI green
 - Restructure `backend/app/` into `models/`, `repositories/`, `services/`, `routers/`, `schemas/`, `security/`, `errors.py`.
 - Move `config.py` to environment-based classes (dev / test / prod).
 - Models for the schema in section 4, `IRepository` base, seed script with the 14 Liga Florilor clubs (section 5).
@@ -120,14 +120,14 @@ Done when: a fan buys a ticket plus a jersey in one payment, and 4.04, 9.04, 9.0
 
 Done when: 10.01, 10.02, 9.02, 7.01 have proof and a full pass through the app produces a readable activity log.
 
-### M6: Deploy and prove it (M) 🟡 files, docs and local proofs done; the live parts wait for decision D3
-- Host on a server with Apache `mod_rewrite`, `mod_proxy`, `mod_headers` and HTTPS (D3).
-- `.htaccess` for SPA fallback, `/api` proxy, compression, caching, HTTPS redirect, headers.
-- Production env vars, Stripe webhook pointed at the public URL.
-- Run Lighthouse (SEO ≥90) and a security-headers scan (grade A); fix what they flag.
-- Fill `docs/BAREM.md` with a proof link per criterion, take screenshots, a green CI run, a short demo script for the oral exam.
+### M6: Deploy and prove it (M) ✅ deployed and proven; left: the live Stripe webhook and optionally real Turnstile keys
+- Deployed to an AWS EC2 server (Ubuntu 24.04) with Apache `mod_rewrite`, `mod_proxy`, `mod_headers` and HTTPS from Let's Encrypt, under a free DuckDNS name (D3). Steps: `deploy/README.md`.
+- `.htaccess` for private-file 403s, SPA fallback, `/api` proxy, compression, caching, headers and the HTTPS redirect; checked in an Apache container and on the live server.
+- Production settings in `backend/.env` on the server (`backend/.env.production.example`); the API runs as `handballday.service`.
+- Lighthouse SEO 100 on the live site; headers, 403s, redirect and the 429 rate limit checked with `curl`.
+- `docs/BAREM.md` has a proof line for every row of the real grading sheet, and `docs/DEMO.md` is the oral-exam script.
 
-Done when: every row in section 2 is ✅ with proof.
+Left (all need you): add the Stripe webhook for the live address and run one test purchase, optionally swap Cloudflare's test Turnstile keys for real ones, and stop or terminate the AWS instance after the exam.
 
 ### M7 (optional): HandballManager kit export
 Only if time remains. Export a jersey design as a small JSON file the game can import. Depends on how the game stores kits; read that code first (not checked yet).
@@ -163,7 +163,7 @@ The activity log is a file (barem 7.01), not a table.
 |---|---|---|
 | D1 | League and clubs | **Decided:** Liga Florilor 2026/27, all 14 clubs, real data from the HandballManager repo |
 | D2 | Jersey delivery | **Decided:** pickup at the match the jersey is bought for |
-| D3 | Hosting | **Open.** Checked against the barem: only 7.02 (0,50 pt) strictly needs a public site, and one published HTML page is enough. A full Apache + HTTPS deployment also makes 10.04 and 10.05 convincing; see `deploy/README.md` |
+| D3 | Hosting | **Decided:** AWS EC2 (Ubuntu 24.04) with Apache and HTTPS, named by a free DuckDNS subdomain. Chosen over Oracle Free Tier because the Oracle account already hosts the HandballManager game server and its limits were near their maximum |
 | D4 | Solo project accepted | **Decided:** yes. Still compare this plan with the original `Barem_evaluare_proiect_web.md` |
 
 ### Seed data (from `D:\Github Desktop\HandballManager`)
